@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.util.HashMap;
 
 @Singleton
-public class ReelRabbitConfiguration extends ChannelInitializer {
+public class RabbitConfiguration extends ChannelInitializer {
 
     @Override
     public void initialize(Channel channel, String name) throws IOException {
-        channel.queueDeclare("payments_for_reel", true, false, false, new HashMap<>()); // (4)
+        channel.queueDeclare("payments_for_reel", true, false, false, new HashMap<>());
         channel.queueBind("payments_for_reel", "amq.topic", "payments");
+        channel.queueDeclare("payments_for_goal", true, false, false, new HashMap<>());
+        channel.queueBind("payments_for_goal", "amq.topic", "payments");
     }
 
 }
