@@ -1,7 +1,6 @@
 package io.github.opendonationassistant.reel;
 
 import com.fasterxml.uuid.Generators;
-import io.github.opendonationassistant.Beans;
 import io.micronaut.data.annotation.Transient;
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +50,7 @@ public class Reel extends ReelData {
     }
     if (
       EACH_PAYMENT_CONDITION.equals(getCondition()) &&
-      payment.getAmount().getMajor() > getRequiredAmount().getMajor()
+      payment.getAmount().getMajor() >= getRequiredAmount().getMajor()
     ) {
       var command = new ReelCommand();
       command.setType("trigger");
@@ -60,6 +59,9 @@ public class Reel extends ReelData {
       log.info("send reel command: {}", command);
       commandSender.send("%sreel".formatted(getRecipientId()), command);
     }
+  }
+
+  public void select(List<String> items){
   }
 
   public void update(WidgetConfig config) {
