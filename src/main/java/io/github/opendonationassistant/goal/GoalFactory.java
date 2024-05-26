@@ -32,6 +32,7 @@ public class GoalFactory {
           widgetId,
           recipientId,
           goalId,
+          false,
           commandSender,
           repository
         );
@@ -60,6 +61,7 @@ public class GoalFactory {
       data.getWidgetId(),
       data.getRecipientId(),
       data.getId(),
+      data.isDefault(),
       commandSender,
       repository
     );

@@ -21,6 +21,7 @@ public class Goal extends GoalData {
     String widgetId,
     String recipientId,
     String goalId,
+    Boolean isDefault,
     GoalCommandSender commandSender,
     GoalRepository repository
   ) {
@@ -31,6 +32,7 @@ public class Goal extends GoalData {
     this.setId(goalId);
     this.setRequiredAmount(new Amount(0, 0, "RUB"));
     this.setAccumulatedAmount(new Amount(0, 0, "RUB"));
+    this.setDefault(isDefault);
   }
 
   public void handlePayment(CompletedPaymentNotification payment) {
@@ -53,9 +55,11 @@ public class Goal extends GoalData {
     var amount = (Integer) ((Map<String, Object>) config.get(
         "requiredAmount"
       )).get("major");
+    var isDefault = (Boolean) config.get("default");
     this.setRequiredAmount(new Amount(amount, 0, "RUB"));
     this.setFullDescription(fullDescription);
     this.setBriefDescription(briefDescription);
+    this.setDefault(isDefault);
     log.info("Update goal {} to {}", getId(), this);
     repository.update(this);
     return this;

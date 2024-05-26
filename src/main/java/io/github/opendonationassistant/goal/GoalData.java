@@ -3,6 +3,7 @@ package io.github.opendonationassistant.goal;
 import io.github.opendonationassistant.reel.Amount;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.MappedProperty;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
@@ -18,6 +19,9 @@ public class GoalData {
   private String fullDescription;
   private Amount accumulatedAmount;
   private Amount requiredAmount;
+
+  @MappedProperty("isdefault")
+  private boolean isDefault = false;
 
   public String getId() {
     return id;
@@ -75,6 +79,15 @@ public class GoalData {
     this.requiredAmount = requiredAmount;
   }
 
+  @MappedProperty("isdefault")
+  public boolean isDefault() {
+    return isDefault;
+  }
+
+  @MappedProperty("isdefault")
+  public void setDefault(boolean isDefault) {
+    this.isDefault = isDefault;
+  }
 
   @Override
   public String toString() {
@@ -93,6 +106,8 @@ public class GoalData {
       accumulatedAmount +
       "\", requiredAmount\"=\"" +
       requiredAmount +
+      "\", isDefault\"=\"" +
+      isDefault +
       "}"
     );
   }
