@@ -23,7 +23,7 @@ public class HistoryPaymentListener {
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification: {}", payment);
     var partial = new HistoryItemData();
-    partial.setId(Generators.timeBasedEpochGenerator().toString());
+    partial.setId(Generators.timeBasedEpochGenerator().generate().toString());
     partial.setAmount(payment.getAmount());
     partial.setMessage(payment.getMessage());
     partial.setNickname(payment.getNickname());
