@@ -8,6 +8,7 @@ import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,8 @@ public class GoalsPaymentListener {
   @Queue("payments_for_goal")
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification: {}", payment);
-    goalFactory
-      .getBy(payment.getGoal())
+    Optional.ofNullable(payment.getGoal())
+      .flatMap(goalFactory::getBy)
       .ifPresent(goal -> goal.handlePayment(payment));
     List<Goal> savedGoals = goalFactory.findFor(payment.getRecipientId());
     var command = new ConfigPutCommand();
