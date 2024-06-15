@@ -56,13 +56,14 @@ public class Reel extends ReelData {
       command.setType("trigger");
       command.setSelection(getItems().get(random.nextInt(getItems().size())));
       command.setWidgetId(getWidgetConfigId());
+      command.setPaymentId(payment.getId());
+      command.setRecipientId(payment.getRecipientId());
       log.info("send reel command: {}", command);
-      commandSender.send("%sreel".formatted(getRecipientId()), command);
+      commandSender.send("reel", command);
     }
   }
 
-  public void select(List<String> items){
-  }
+  public void select(List<String> items) {}
 
   public void update(WidgetConfig config) {
     config
@@ -77,11 +78,7 @@ public class Reel extends ReelData {
         }
         if ("requiredAmount".equals(property.getName())) {
           this.setRequiredAmount(
-              new Amount(
-                Integer.parseInt((String) property.getValue()),
-                0,
-                "RUB"
-              )
+              new Amount((Integer) property.getValue(), 0, "RUB")
             );
         }
       });
@@ -92,14 +89,20 @@ public class Reel extends ReelData {
   @Override
   public String toString() {
     return (
-      "{\"_type\"=\"Reel\",\"log\"=\"" +
-      log +
-      "\", commandSender\"=\"" +
-      commandSender +
-      "\", random\"=\"" +
-      random +
-      "\", repository\"=\"" +
-      repository +
+      "{\"_type\"=\"Reel\",\"getRecipientId()\"=\"" +
+      getRecipientId() +
+      "\", getCondition()\"=\"" +
+      getCondition() +
+      "\", getAccumulatedAmount()\"=\"" +
+      getAccumulatedAmount() +
+      "\", getRequiredAmount()\"=\"" +
+      getRequiredAmount() +
+      "\", getItems()\"=\"" +
+      getItems() +
+      "\", getId()\"=\"" +
+      getId() +
+      "\", getWidgetConfigId()\"=\"" +
+      getWidgetConfigId() +
       "}"
     );
   }

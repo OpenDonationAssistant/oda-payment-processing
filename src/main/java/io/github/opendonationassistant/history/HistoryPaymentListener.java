@@ -6,6 +6,8 @@ import io.github.opendonationassistant.reel.CompletedPaymentNotification;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +46,8 @@ public class HistoryPaymentListener {
       return attachment;
     });
 
-    goalFactory
-      .getBy(payment.getGoal())
+    Optional.ofNullable(payment.getGoal())
+      .flatMap(goalFactory::getBy)
       .ifPresent(goal -> {
         var targetGoal = new TargetGoal();
         targetGoal.setGoalId(payment.getGoal());

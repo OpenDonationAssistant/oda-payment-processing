@@ -18,6 +18,8 @@ public class RabbitConfiguration extends ChannelInitializer {
         channel.queueBind("payments_for_goal", "amq.topic", "payments");
         channel.queueDeclare("payments_for_history", true, false, false, new HashMap<>());
         channel.queueBind("payments_for_history", "amq.topic", "payments");
+        channel.queueDeclare("commands.reel", true, false, false, new HashMap<>());
+        channel.queueBind("commands.reel", "commands", "reel");
     }
 
 }
