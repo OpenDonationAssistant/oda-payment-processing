@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions: write-all
 
@@ -21,18 +21,19 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
-          distribution: 'graalvm'
+          java-version: "21"
+          distribution: "graalvm"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: s4u/maven-settings-action@v3.0.0
         with:
+          servers: '[{"id": "github", "username": "${{ secrets.MAVEN_USER }}", "password": "${{ secrets.MAVEN_TOKEN }}"}]'
           repositories: '[{"id":"github","name":"github","url":"https://maven.pkg.github.com/opendonationassistant/oda-libraries","snapshots":{"enabled":true}}]'
 
       - run: cat /home/runner/.m2/settings.xml
 
       - name: Build with Maven
-        run: mvn -B package -Dpackaging=native-image -DskipTests
+        run: mvn -q -B package -Dpackaging=native-image -DskipTests
 
       - name: Docker login
         uses: docker/login-action@v3
