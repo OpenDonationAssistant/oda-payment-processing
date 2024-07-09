@@ -4,7 +4,9 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;
 import io.micronaut.context.annotation.ContextConfigurer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 import io.micronaut.runtime.Micronaut;
+import jakarta.inject.Singleton;
 
 public class Application {
 
@@ -25,5 +27,10 @@ public class Application {
       .banner(false)
       .start();
     Beans.context = context;
+  }
+
+  @Singleton
+  public ChannelInitializer rabbitConfiguration(){
+    return new RabbitConfiguration();
   }
 }

@@ -59,7 +59,7 @@ public class Reel extends ReelData {
       command.setPaymentId(payment.getId());
       command.setRecipientId(payment.getRecipientId());
       log.info("send reel command: {}", command);
-      commandSender.send("reel", command);
+      commandSender.send("%sreel".formatted(payment.getRecipientId()), command);
     }
   }
 

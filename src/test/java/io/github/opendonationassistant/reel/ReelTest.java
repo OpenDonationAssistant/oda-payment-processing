@@ -23,6 +23,7 @@ public class ReelTest {
       expectedCommand.setType(ReelCommand.TRIGGER_TYPE);
       expectedCommand.setSelection("test1");
       expectedCommand.setWidgetId("widgetId");
+      expectedCommand.setRecipientId("testuser");
 
       var notification = new CompletedPaymentNotification();
       notification.setRecipientId("testuser");
