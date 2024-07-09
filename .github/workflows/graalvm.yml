@@ -30,8 +30,6 @@ jobs:
           servers: '[{"id": "github", "username": "${{ secrets.MAVEN_USER }}", "password": "${{ secrets.MAVEN_TOKEN }}"}]'
           repositories: '[{"id":"github","name":"github","url":"https://maven.pkg.github.com/opendonationassistant/oda-libraries","snapshots":{"enabled":true}}]'
 
-      - run: cat /home/runner/.m2/settings.xml
-
       - name: Build with Maven
         run: mvn -q -B package -Dpackaging=native-image -DskipTests
 
@@ -48,3 +46,13 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/opendonationassistant/oda-payment-processing:${{ github.RUN_NUMBER }}
+
+      - name: Deploying new version
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.PORT }}
+          script: sh ~/update_processing.sh ${{ github.RUN_NUMBER }}
