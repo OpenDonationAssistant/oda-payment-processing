@@ -35,7 +35,7 @@ public class Goal extends GoalData {
     this.setDefault(isDefault);
   }
 
-  public void handlePayment(CompletedPaymentNotification payment) {
+  public Goal handlePayment(CompletedPaymentNotification payment) {
     var paid = payment.getAmount().getMajor();
     var oldAmount = this.getAccumulatedAmount();
     this.setAccumulatedAmount(
@@ -47,6 +47,7 @@ public class Goal extends GoalData {
       );
     log.debug("Updating goal {} to {}", getId(), this);
     repository.update(this);
+    return this;
   }
 
   public Goal update(Map<String, Object> config) {
@@ -69,14 +70,14 @@ public class Goal extends GoalData {
     repository.delete(this);
   }
 
-  private GoalCommand createCommand(String type) {
+  public GoalCommand createUpdateCommand() {
     var command = new GoalCommand();
     command.setAccumulatedAmount(this.getAccumulatedAmount());
     command.setRequiredAmount(this.getRequiredAmount());
     command.setBriefDescription(this.getBriefDescription());
     command.setFullDescription(this.getFullDescription());
     command.setGoalId(this.getId());
-    command.setType(type);
+    command.setType("update");
     return command;
   }
 
