@@ -1,6 +1,6 @@
 package io.github.opendonationassistant.goal;
 
-import io.github.opendonationassistant.reel.Amount;
+import io.github.opendonationassistant.commons.Amount;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable

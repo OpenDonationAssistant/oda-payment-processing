@@ -1,5 +1,6 @@
 package io.github.opendonationassistant.reel;
 
+import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.utils.StringListConverter;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;

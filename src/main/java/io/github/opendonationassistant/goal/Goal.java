@@ -1,7 +1,7 @@
 package io.github.opendonationassistant.goal;
 
-import io.github.opendonationassistant.reel.Amount;
-import io.github.opendonationassistant.reel.CompletedPaymentNotification;
+import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.data.annotation.Transient;
 import java.util.Map;
 import org.slf4j.Logger;

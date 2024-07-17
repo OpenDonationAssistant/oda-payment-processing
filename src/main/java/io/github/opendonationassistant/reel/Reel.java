@@ -1,6 +1,9 @@
 package io.github.opendonationassistant.reel;
 
 import com.fasterxml.uuid.Generators;
+
+import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.data.annotation.Transient;
 import java.util.List;
 import java.util.Objects;

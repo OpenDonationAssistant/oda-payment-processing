@@ -2,7 +2,8 @@ package io.github.opendonationassistant.goal;
 
 import io.github.opendonationassistant.config.ConfigCommandSender;
 import io.github.opendonationassistant.config.ConfigPutCommand;
-import io.github.opendonationassistant.reel.CompletedPaymentNotification;
+import io.github.opendonationassistant.events.CompletedPaymentNotification;
+import io.github.opendonationassistant.RabbitConfiguration;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -33,7 +34,7 @@ public class GoalsPaymentListener {
     this.goalCommandSender = goalCommandSender;
   }
 
-  @Queue("payments_for_goal")
+  @Queue(RabbitConfiguration.PAYMENT_GOAL_QUEUE_NAME)
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification: {}", payment);
     Optional<Goal> updatedGoal = Optional

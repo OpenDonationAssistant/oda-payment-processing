@@ -1,6 +1,10 @@
 package io.github.opendonationassistant.reel;
 
 import org.junit.jupiter.api.Test;
+
+import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.events.CompletedPaymentNotification;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 

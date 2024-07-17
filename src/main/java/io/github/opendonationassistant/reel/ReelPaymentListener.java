@@ -1,5 +1,6 @@
 package io.github.opendonationassistant.reel;
 
+import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
