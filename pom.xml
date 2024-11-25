@@ -14,24 +14,17 @@
   </parent>
   <properties>
     <packaging>jar</packaging>
-    <jdk.version>17</jdk.version>
-    <release.version>17</release.version>
+    <jdk.version>21</jdk.version>
+    <release.version>21</release.version>
     <micronaut.version>4.3.4</micronaut.version>
     <exec.mainClass>io.github.opendonationassistant.Application</exec.mainClass>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
       <groupId>io.github.opendonationassistant</groupId>
       <artifactId>oda-rabbit-conf</artifactId>
-      <version>0.3.0</version>
+      <version>0.6.4-19</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.uuid</groupId>
@@ -127,8 +120,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
+          <source>${jdk.version}</source>
+          <target>${release.version}</target>
           <useIncrementalCompilation>false</useIncrementalCompilation>
-
           <annotationProcessorPaths combine.self="override">
             <path>
               <groupId>io.micronaut</groupId>

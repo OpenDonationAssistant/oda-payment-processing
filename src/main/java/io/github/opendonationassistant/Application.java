@@ -1,5 +1,6 @@
 package io.github.opendonationassistant;
 
+import io.github.opendonationassistant.rabbit.RabbitConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;

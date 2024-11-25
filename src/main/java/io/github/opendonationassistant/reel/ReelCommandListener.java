@@ -4,7 +4,6 @@ import io.github.opendonationassistant.history.HistoryCommand;
 import io.github.opendonationassistant.history.HistoryCommandSender;
 import io.github.opendonationassistant.history.HistoryItemData;
 import io.github.opendonationassistant.history.ReelResult;
-import io.github.opendonationassistant.RabbitConfiguration;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -25,7 +24,7 @@ public class ReelCommandListener {
     this.historyCommandSender = historyCommandSender;
   }
 
-  @Queue(RabbitConfiguration.REEL_COMMANDS_QUEUE_NAME)
+  @Queue(io.github.opendonationassistant.rabbit.Queue.Commands.REEL)
   public void listen(ReelCommand command) {
     HistoryCommand historyCommand = new HistoryCommand();
     HistoryItemData data = new HistoryItemData();
@@ -36,6 +35,5 @@ public class ReelCommandListener {
     historyCommand.setPartial(data);
     historyCommand.setType("update");
     historyCommandSender.send("history", historyCommand);
-    commandSender.send("%sreel".formatted(command.getRecipientId()), command);
-  }
+    commandSender.send("%sreel".formatted(command.getRecipientId()), command); }
 }

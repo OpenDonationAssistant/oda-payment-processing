@@ -34,7 +34,7 @@ public class ReelTest {
       notification.setAmount(new Amount(500, 0, "RUB"));
 
       reel.handlePayment(notification);
-      verify(commandSender).send("testuserreel", expectedCommand);
+      verify(commandSender).send("reel", expectedCommand);
   }
 
 }

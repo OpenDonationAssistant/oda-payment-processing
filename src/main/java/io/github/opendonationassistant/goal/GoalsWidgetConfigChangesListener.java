@@ -4,7 +4,6 @@ import io.github.opendonationassistant.config.ConfigCommandSender;
 import io.github.opendonationassistant.config.ConfigPutCommand;
 import io.github.opendonationassistant.reel.Widget;
 import io.github.opendonationassistant.reel.WidgetChangedEvent;
-import io.github.opendonationassistant.RabbitConfiguration;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -34,7 +33,7 @@ public class GoalsWidgetConfigChangesListener {
     this.configCommandSender = configCommandSender;
   }
 
-  @Queue(RabbitConfiguration.GOALS_CONFIG_QUEUE_NAME)
+  @Queue(io.github.opendonationassistant.rabbit.Queue.Configs.GOAL)
   public void listen(WidgetChangedEvent event) {
     log.info("Received goals configuration: {}", event);
     if (event == null) {

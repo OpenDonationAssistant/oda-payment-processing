@@ -2,7 +2,6 @@ package io.github.opendonationassistant.history;
 
 import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.goal.GoalFactory;
-import io.github.opendonationassistant.RabbitConfiguration;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
@@ -28,7 +27,7 @@ public class HistoryPaymentListener {
     this.goalFactory = goalFactory;
   }
 
-  @Queue(RabbitConfiguration.PAYMENT_HISTORY_QUEUE_NAME)
+  @Queue(io.github.opendonationassistant.rabbit.Queue.Payments.HISTORY)
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification: {}", payment);
 
