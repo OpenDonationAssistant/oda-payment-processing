@@ -31,7 +31,7 @@ public class Application {
   }
 
   @Singleton
-  public ChannelInitializer rabbitConfiguration(){
+  public ChannelInitializer rabbitConfiguration() {
     return new RabbitConfiguration();
   }
 }

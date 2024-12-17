@@ -49,6 +49,9 @@ public class DonatonData {
   }
 
   public Map<String, BigDecimal> getSecondsPerDonation() {
+    if (secondsPerDonation == null) {
+      return Map.of();
+    }
     return secondsPerDonation;
   }
 

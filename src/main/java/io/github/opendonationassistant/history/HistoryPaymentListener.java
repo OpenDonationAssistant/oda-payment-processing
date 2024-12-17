@@ -1,13 +1,12 @@
 package io.github.opendonationassistant.history;
 
 import com.fasterxml.uuid.Generators;
-import io.github.opendonationassistant.goal.GoalFactory;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
+import io.github.opendonationassistant.goal.GoalFactory;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +39,17 @@ public class HistoryPaymentListener {
     partial.setRecipientId(payment.getRecipientId());
     partial.setAuthorizationTimestamp(payment.getAuthorizationTimestamp());
 
-    payment.getAttachments().stream().map(attachmentId -> {
-      var attachment = new Attachment();
-      attachment.setId(attachmentId);
-      return attachment;
-    });
+    payment
+      .getAttachments()
+      .stream()
+      .map(attachmentId -> {
+        var attachment = new Attachment();
+        attachment.setId(attachmentId);
+        return attachment;
+      });
 
-    Optional.ofNullable(payment.getGoal())
+    Optional
+      .ofNullable(payment.getGoal())
       .flatMap(goalFactory::getBy)
       .ifPresent(goal -> {
         var targetGoal = new TargetGoal();

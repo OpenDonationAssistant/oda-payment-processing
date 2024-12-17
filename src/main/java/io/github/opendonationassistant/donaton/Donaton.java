@@ -38,9 +38,17 @@ public class Donaton {
   }
 
   public void handlePayment(CompletedPaymentNotification notification) {
-    var amount = notification.getAmount().getMajor();
     var currency = notification.getAmount().getCurrency();
     var rate = data.getSecondsPerDonation().get(currency);
+    if (rate == null) {
+      log.warn(
+        "No rate for currency {} and recipient {}",
+        currency,
+        notification.getRecipientId()
+      );
+      return;
+    }
+    var amount = notification.getAmount().getMajor();
     var endDate = data.getEndDate();
     var newEndDate = endDate.plusSeconds(
       rate.multiply(BigDecimal.valueOf(amount)).longValue()
