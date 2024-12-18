@@ -10,6 +10,7 @@ import io.github.opendonationassistant.events.PaymentSender;
 import io.github.opendonationassistant.events.alerts.AlertNotification.AlertMedia;
 import io.github.opendonationassistant.events.alerts.AlertSender;
 import io.micronaut.context.annotation.Value;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -45,23 +46,13 @@ public class AlertPaymentListener {
     this.modelUri = modelUri;
   }
 
-  @Queue(ALERTS)
-  public void listen(CompletedPaymentNotification payment) {
-    log.info("Received notification for alert: {}", payment);
-    if (
-      !("tabularussia".equals(payment.getRecipientId()) ||
-        "testuser".equals(payment.getRecipientId()))
-    ) {
-      sender.send(payment.getRecipientId(), payment.toAlertNotification());
-      return;
-    }
-    if (
-      !(payment.getAmount().getMajor() > 499 &&
-        payment.getAmount().getMajor() < 1000)
-    ) {
-      sender.send(payment.getRecipientId(), payment.toAlertNotification());
-      return;
-    }
+  private void sendUsualNotification(CompletedPaymentNotification payment) {
+    sender.send(payment.getRecipientId(), payment.toAlertNotification());
+  }
+
+  private void sendNotificationWithGeneratedArt(
+    CompletedPaymentNotification payment
+  ) {
     log.info("Creating art for {} and token {}", payment.getId(), token);
     var artRequest = new ArtGenerationRequest();
     artRequest.setModelUri(this.modelUri);
@@ -96,5 +87,30 @@ public class AlertPaymentListener {
     }
     log.info("Sent alert for payment: {}", notification);
     sender.send(payment.getRecipientId(), notification);
+  }
+
+  @Queue(ALERTS)
+  public void listen(CompletedPaymentNotification payment) {
+    log.info("Received notification for alert: {}", payment);
+    if (StringUtils.isEmpty(payment.getMessage())) {
+      sendUsualNotification(payment);
+      return;
+    }
+    if ("tabularussia".equals(payment.getRecipientId())) {
+      if (
+        payment.getAmount().getMajor() > 499 &&
+        payment.getAmount().getMajor() < 1000
+      ) {
+        sendNotificationWithGeneratedArt(payment);
+      } else {
+        sendUsualNotification(payment);
+      }
+      return;
+    }
+    if ("batongleba".equals(payment.getRecipientId())) {
+      sendNotificationWithGeneratedArt(payment);
+      return;
+    }
+    sendUsualNotification(payment);
   }
 }
