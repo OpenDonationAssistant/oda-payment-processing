@@ -48,7 +48,10 @@ public class AlertPaymentListener {
   @Queue(ALERTS)
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification for alert: {}", payment);
-    if (!"tabularussia".equals(payment.getRecipientId())) {
+    if (
+      !("tabularussia".equals(payment.getRecipientId()) ||
+        "testuser".equals(payment.getRecipientId()))
+    ) {
       sender.send(payment.getRecipientId(), payment.toAlertNotification());
       return;
     }
