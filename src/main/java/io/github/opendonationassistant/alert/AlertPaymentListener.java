@@ -107,6 +107,16 @@ public class AlertPaymentListener {
       }
       return;
     }
+    if (("philipi4").equals(payment.getRecipientId()){
+      if (
+        payment.getAmount().getMajor() == 100
+      ) {
+        sendNotificationWithGeneratedArt(payment);
+      } else {
+        sendUsualNotification(payment);
+      }
+      return;
+    }
     if ("batongleba".equals(payment.getRecipientId())) {
       sendNotificationWithGeneratedArt(payment);
       return;
