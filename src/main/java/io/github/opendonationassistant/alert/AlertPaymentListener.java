@@ -107,7 +107,7 @@ public class AlertPaymentListener {
       }
       return;
     }
-    if (("philipi4").equals(payment.getRecipientId()){
+    if ("philipi4".equals(payment.getRecipientId())){
       if (
         payment.getAmount().getMajor() == 100
       ) {
