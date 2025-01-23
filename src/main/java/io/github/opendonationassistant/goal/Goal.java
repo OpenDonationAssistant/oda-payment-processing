@@ -56,8 +56,12 @@ public class Goal extends GoalData {
     var amount = (Integer) ((Map<String, Object>) config.get(
         "requiredAmount"
       )).get("major");
+    var accumulatedAmount = (Integer) ((Map<String, Object>) config.getOrDefault(
+        "accumulatedAmount", Map.of("major", 0)
+      )).getOrDefault("major", 0);
     var isDefault = (Boolean) config.get("default");
     this.setRequiredAmount(new Amount(amount, 0, "RUB"));
+    this.setAccumulatedAmount(new Amount(accumulatedAmount, 0, "RUB"));
     this.setFullDescription(fullDescription);
     this.setBriefDescription(briefDescription);
     this.setDefault(isDefault);
