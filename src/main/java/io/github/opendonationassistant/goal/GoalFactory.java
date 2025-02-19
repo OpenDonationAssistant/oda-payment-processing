@@ -56,6 +56,14 @@ public class GoalFactory {
       .toList();
   }
 
+  public List<Goal> findFor(String recipientId, String widgetId) {
+    return repository
+      .getByRecipientIdAndWidgetId(recipientId, widgetId)
+      .stream()
+      .map(this::from)
+      .toList();
+  }
+
   private Goal from(GoalData data) {
     var goal = new Goal(
       data.getWidgetId(),

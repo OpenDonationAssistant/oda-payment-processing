@@ -4,6 +4,7 @@ import io.github.opendonationassistant.commons.Amount;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.MappedProperty;
+import io.micronaut.serde.ObjectMapper;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
@@ -91,24 +92,10 @@ public class GoalData {
 
   @Override
   public String toString() {
-    return (
-      "{\"_type\"=\"GoalData\",\"id\"=\"" +
-      id +
-      "\", recipientId\"=\"" +
-      recipientId +
-      "\", widgetId\"=\"" +
-      widgetId +
-      "\", briefDescription\"=\"" +
-      briefDescription +
-      "\", fullDescription\"=\"" +
-      fullDescription +
-      "\", accumulatedAmount\"=\"" +
-      accumulatedAmount +
-      "\", requiredAmount\"=\"" +
-      requiredAmount +
-      "\", isDefault\"=\"" +
-      isDefault +
-      "}"
-    );
+    try {
+      return ObjectMapper.getDefault().writeValueAsString(this);
+    } catch (Exception e) {
+      return "Can't serialize DonatonData: " + e.getMessage();
+    }
   }
 }

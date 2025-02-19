@@ -11,4 +11,5 @@ import io.micronaut.data.repository.CrudRepository;
 public interface GoalRepository extends CrudRepository<GoalData, String> {
   List<GoalData> getByRecipientId(String recipientId);
   Optional<GoalData> getById(String id);
+  List<GoalData> getByRecipientIdAndWidgetId(String recipientId, String widgetId);
 }

@@ -3,6 +3,8 @@ package io.github.opendonationassistant.goal;
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.data.annotation.Transient;
+import io.micronaut.serde.ObjectMapper;
+
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +87,23 @@ public class Goal extends GoalData {
     return command;
   }
 
+  public Map<String, Object> asWidgetConfigGoal() {
+      return Map.of(
+        "id", this.getId(),
+        "briefDescription", this.getBriefDescription(),
+        "fullDescription", this.getFullDescription(),
+        "accumulatedAmount", this.getAccumulatedAmount(),
+        "requiredAmount", this.getRequiredAmount(),
+        "default", this.isDefault()
+      );
+  }
+
   @Override
   public String toString() {
-    return super.toString();
+    try {
+      return ObjectMapper.getDefault().writeValueAsString(this);
+    } catch (Exception e) {
+      return "Can't serialize Goal: " + e.getMessage();
+    }
   }
 }
