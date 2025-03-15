@@ -84,6 +84,8 @@ public class Goal extends GoalData {
     updatedGoal.setBriefDescription(this.getBriefDescription());
     updatedGoal.setFullDescription(this.getFullDescription());
     updatedGoal.setGoalId(this.getId());
+    updatedGoal.setRecipientId(this.getRecipientId());
+    updatedGoal.setIsDefault(this.isDefault());
     return updatedGoal;
   }
 
