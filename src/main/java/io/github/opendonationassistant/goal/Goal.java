@@ -2,6 +2,7 @@ package io.github.opendonationassistant.goal;
 
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
+import io.github.opendonationassistant.events.goal.UpdatedGoal;
 import io.micronaut.data.annotation.Transient;
 import io.micronaut.serde.ObjectMapper;
 
@@ -74,6 +75,16 @@ public class Goal extends GoalData {
 
   public void delete(){
     repository.delete(this);
+  }
+
+  public UpdatedGoal asUpdatedGoal(){
+    var updatedGoal = new UpdatedGoal();
+    updatedGoal.setAccumulatedAmount(this.getAccumulatedAmount());
+    updatedGoal.setRequiredAmount(this.getRequiredAmount());
+    updatedGoal.setBriefDescription(this.getBriefDescription());
+    updatedGoal.setFullDescription(this.getFullDescription());
+    updatedGoal.setGoalId(this.getId());
+    return updatedGoal;
   }
 
   public GoalCommand createUpdateCommand() {
