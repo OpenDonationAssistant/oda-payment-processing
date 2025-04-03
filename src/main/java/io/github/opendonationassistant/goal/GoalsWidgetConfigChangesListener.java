@@ -79,10 +79,10 @@ public class GoalsWidgetConfigChangesListener {
                 .toList()
             );
             // TODO: переделать
-            updatedGoals
-              .stream()
-              .map(Goal::asUpdatedGoal)
-              .forEach(goalSender::sendUpdatedGoal);
+            //updatedGoals
+            //  .stream()
+            //  .map(Goal::asUpdatedGoal)
+            //  .forEach(goalSender::sendUpdatedGoal);
           }
         });
       savedGoals
