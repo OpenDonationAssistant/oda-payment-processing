@@ -95,6 +95,8 @@ public class GoalsPaymentListener {
         widgetCommandSender.send(new WidgetUpdateCommand(widgetId, patch));
       });
 
+    // TODO: send 1 message instead of 3 ( maybe use WidgetChangedNotification)
+    // TODO: reload would be done without it, is it needed?
     updatedGoal
       .map(goal -> goal.createUpdateCommand())
       .ifPresent(updateCommand ->

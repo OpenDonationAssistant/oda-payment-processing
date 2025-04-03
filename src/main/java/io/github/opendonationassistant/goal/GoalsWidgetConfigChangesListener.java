@@ -2,6 +2,7 @@ package io.github.opendonationassistant.goal;
 
 import io.github.opendonationassistant.config.ConfigCommandSender;
 import io.github.opendonationassistant.config.ConfigPutCommand;
+import io.github.opendonationassistant.events.goal.GoalSender;
 import io.github.opendonationassistant.reel.Widget;
 import io.github.opendonationassistant.reel.WidgetChangedEvent;
 import io.micronaut.rabbitmq.annotation.Queue;
@@ -23,14 +24,17 @@ public class GoalsWidgetConfigChangesListener {
   );
   private final GoalFactory goalFactory;
   private final ConfigCommandSender configCommandSender;
+  private final GoalSender goalSender;
 
   @Inject
   public GoalsWidgetConfigChangesListener(
     GoalFactory goalFactory,
-    ConfigCommandSender configCommandSender
+    ConfigCommandSender configCommandSender,
+    GoalSender goalSender
   ) {
     this.goalFactory = goalFactory;
     this.configCommandSender = configCommandSender;
+    this.goalSender = goalSender;
   }
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Configs.GOAL)
@@ -74,6 +78,11 @@ public class GoalsWidgetConfigChangesListener {
                 })
                 .toList()
             );
+            // TODO: переделать
+            updatedGoals
+              .stream()
+              .map(Goal::asUpdatedGoal)
+              .forEach(goalSender::sendUpdatedGoal);
           }
         });
       savedGoals
