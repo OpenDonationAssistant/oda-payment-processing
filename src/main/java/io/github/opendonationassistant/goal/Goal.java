@@ -80,6 +80,7 @@ public class Goal extends GoalData {
   public UpdatedGoal asUpdatedGoal(){
     var updatedGoal = new UpdatedGoal();
     updatedGoal.setAccumulatedAmount(this.getAccumulatedAmount());
+    updatedGoal.setWidgetId(this.getWidgetId());
     updatedGoal.setRequiredAmount(this.getRequiredAmount());
     updatedGoal.setBriefDescription(this.getBriefDescription());
     updatedGoal.setFullDescription(this.getFullDescription());
