@@ -22,7 +22,7 @@ public class ReelPaymentListener {
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification: {}", payment);
     reelFactory
-      .findFor(payment.getRecipientId())
+      .findFor(payment.recipientId())
       .forEach(reel -> reel.handlePayment(payment));
   }
 }

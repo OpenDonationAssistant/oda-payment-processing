@@ -1,10 +1,10 @@
 package io.github.opendonationassistant.goal;
 
 import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.commons.ToString;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.MappedProperty;
-import io.micronaut.serde.ObjectMapper;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
@@ -20,6 +20,7 @@ public class GoalData {
   private String fullDescription;
   private Amount accumulatedAmount;
   private Amount requiredAmount;
+  private Boolean enabled;
 
   @MappedProperty("isdefault")
   private boolean isDefault = false;
@@ -90,12 +91,16 @@ public class GoalData {
     this.isDefault = isDefault;
   }
 
+  public Boolean getEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
+
   @Override
   public String toString() {
-    try {
-      return ObjectMapper.getDefault().writeValueAsString(this);
-    } catch (Exception e) {
-      return "Can't serialize DonatonData: " + e.getMessage();
-    }
+    return ToString.asJson(this);
   }
 }

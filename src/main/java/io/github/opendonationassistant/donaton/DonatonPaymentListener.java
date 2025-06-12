@@ -26,7 +26,7 @@ public class DonatonPaymentListener {
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification for donaton: {}", payment);
     repository
-      .findFor(payment.getRecipientId())
+      .findFor(payment.recipientId())
       .forEach(donaton -> donaton.handlePayment(payment));
   }
 }

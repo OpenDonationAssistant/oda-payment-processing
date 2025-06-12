@@ -38,68 +38,74 @@ public class Donaton {
   }
 
   public void handlePayment(CompletedPaymentNotification notification) {
-    var currency = notification.getAmount().getCurrency();
+    var currency = notification.amount().getCurrency();
     var rate = data.getSecondsPerDonation().get(currency);
     if (rate == null) {
       log.warn(
         "No rate for currency {} and recipient {}",
         currency,
-        notification.getRecipientId()
+        notification.recipientId()
       );
       return;
     }
-    var amount = notification.getAmount().getMajor();
+    var amount = notification.amount().getMajor();
     var endDate = data.getEndDate();
     var newEndDate = endDate.plusSeconds(
       rate.multiply(BigDecimal.valueOf(amount)).longValue()
     );
     data.setEndDate(newEndDate);
     repository.update(data);
-    var timerEnd = new WidgetProperty();
-    timerEnd.setName("timer-end");
-    timerEnd.setValue(Map.of("timestamp", formatter.format(newEndDate)));
-    var patch = new WidgetConfig();
-    patch.setProperties(List.of(timerEnd));
+    var timerEnd = new WidgetProperty(
+      "timer-end",
+      "timer-end",
+      "",
+      Map.of("timestamp", formatter.format(newEndDate))
+    );
+    var patch = new WidgetConfig(List.of(timerEnd));
     WidgetUpdateCommand command = new WidgetUpdateCommand(data.getId(), patch);
     commandSender.send(command);
   }
 
   public void update(WidgetConfig config) {
     config
-      .getProperties()
+      .properties()
       .stream()
       .forEach(property -> {
-        if ("timer-end".equals(property.getName())) {
+        if ("timer-end".equals(property.name())) {
           String timestamp =
-            ((Map<String, String>) property.getValue()).get("timestamp");
+            ((Map<String, String>) property.value()).get("timestamp");
           this.data.setEndDate(Instant.from(formatter.parse(timestamp)));
         }
-        if ("price".equals(property.getName())) {
-          var price = (Map<String, Object>) property.getValue();
+        if ("price".equals(property.name())) {
+          var price = (Map<String, Object>) property.value();
           String unit = (String) price.get("unit");
           Integer amount = (Integer) price.get("price");
           if ("10MIN".equals(unit)) {
-            var rate = BigDecimal
-              .valueOf(60 * 10)
-              .divide(BigDecimal.valueOf(amount), RoundingMode.HALF_UP);
+            var rate = BigDecimal.valueOf(60 * 10).divide(
+              BigDecimal.valueOf(amount),
+              RoundingMode.HALF_UP
+            );
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("MIN".equals(unit)) {
-            var rate = BigDecimal
-              .valueOf(60)
-              .divide(BigDecimal.valueOf(amount), RoundingMode.HALF_UP);
+            var rate = BigDecimal.valueOf(60).divide(
+              BigDecimal.valueOf(amount),
+              RoundingMode.HALF_UP
+            );
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("HOUR".equals(unit)) {
-            var rate = BigDecimal
-              .valueOf(60 * 60)
-              .divide(BigDecimal.valueOf(amount), RoundingMode.HALF_UP);
+            var rate = BigDecimal.valueOf(60 * 60).divide(
+              BigDecimal.valueOf(amount),
+              RoundingMode.HALF_UP
+            );
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("DAY".equals(unit)) {
-            var rate = BigDecimal
-              .valueOf(60 * 60 * 24)
-              .divide(BigDecimal.valueOf(amount), RoundingMode.HALF_UP);
+            var rate = BigDecimal.valueOf(60 * 60 * 24).divide(
+              BigDecimal.valueOf(amount),
+              RoundingMode.HALF_UP
+            );
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
         }

@@ -1,6 +1,7 @@
 package io.github.opendonationassistant.reel;
 
 import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.commons.ToString;
 import io.github.opendonationassistant.utils.StringListConverter;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
@@ -22,6 +23,7 @@ public class ReelData {
   private Amount requiredAmount;
   @MappedProperty(converter = StringListConverter.class)
   private List<String> items;
+  private Boolean enabled;
 
   public String getRecipientId() {
     return recipientId;
@@ -79,10 +81,16 @@ public class ReelData {
     this.widgetConfigId = widgetConfigId;
   }
 
+  public Boolean getEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
+  }
+
   @Override
   public String toString() {
-    return "{\"_type\"=\"ReelData\",\"id\"=\"" + id + "\", recipientId\"=\"" + recipientId + "\", condition\"=\""
-        + condition + "\", widgetConfigId\"=\"" + widgetConfigId + "\", accumulatedAmount\"=\"" + accumulatedAmount
-        + "\", requiredAmount\"=\"" + requiredAmount + "\", items\"=\"" + items + "}";
+    return ToString.asJson(this);
   }
 }

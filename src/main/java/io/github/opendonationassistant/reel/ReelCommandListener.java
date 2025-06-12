@@ -35,5 +35,6 @@ public class ReelCommandListener {
     historyCommand.setPartial(data);
     historyCommand.setType("update");
     historyCommandSender.send("history", historyCommand);
-    commandSender.send("%sreel".formatted(command.getRecipientId()), command); }
+    commandSender.send("%sreel".formatted(command.getRecipientId()), command);
+  }
 }

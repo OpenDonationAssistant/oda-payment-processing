@@ -6,7 +6,6 @@ import io.github.opendonationassistant.art.ArtClient;
 import io.github.opendonationassistant.art.ArtGenerationRequest;
 import io.github.opendonationassistant.art.OperationDescription;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
-import io.github.opendonationassistant.events.PaymentSender;
 import io.github.opendonationassistant.events.alerts.AlertNotification.AlertMedia;
 import io.github.opendonationassistant.events.alerts.AlertSender;
 import io.micronaut.context.annotation.Value;
@@ -47,17 +46,17 @@ public class AlertPaymentListener {
   }
 
   private void sendUsualNotification(CompletedPaymentNotification payment) {
-    sender.send(payment.getRecipientId(), payment.toAlertNotification());
+    sender.send(payment.recipientId(), payment.asAlertNotification());
   }
 
   private void sendNotificationWithGeneratedArt(
     CompletedPaymentNotification payment
   ) {
-    log.info("Creating art for {} and token {}", payment.getId(), token);
+    log.info("Creating art for {} and token {}", payment.id(), token);
     var artRequest = new ArtGenerationRequest();
     artRequest.setModelUri(this.modelUri);
     artRequest.setMessages(
-      List.of(new ArtGenerationRequest.Message(payment.getMessage(), 1))
+      List.of(new ArtGenerationRequest.Message(payment.message(), 1))
     );
     artRequest.setGenerationOptions(this.options);
     var done = false;
@@ -79,45 +78,46 @@ public class AlertPaymentListener {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    var notification = payment.toAlertNotification();
+    var notification = payment.asAlertNotification();
     if (done) {
-      notification.setMedia(
+      notification =  notification.withMedia(
         new AlertMedia("/generated/%s".formatted(requested.getId()))
       );
     }
     log.info("Sent alert for payment: {}", notification);
-    sender.send(payment.getRecipientId(), notification);
+    sender.send(payment.recipientId(), notification);
   }
 
   @Queue(ALERTS)
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification for alert: {}", payment);
-    if (StringUtils.isEmpty(payment.getMessage())) {
+    if (StringUtils.isEmpty(payment.message())) {
       sendUsualNotification(payment);
       return;
     }
-    if ("tabularussia".equals(payment.getRecipientId())) {
+    if ("tabularussia".equals(payment.recipientId())) {
       if (
-        payment.getAmount().getMajor() > 499 &&
-        payment.getAmount().getMajor() < 1000
+        payment.amount().getMajor() > 499 && payment.amount().getMajor() < 1000
       ) {
+        if (payment.amount().getMajor() != 666) {
+          sendNotificationWithGeneratedArt(payment);
+        } else {
+          sendUsualNotification(payment);
+        }
+      } else {
+        sendUsualNotification(payment);
+      }
+      return;
+    }
+    if ("philipi4".equals(payment.recipientId())) {
+      if (payment.amount().getMajor() == 100) {
         sendNotificationWithGeneratedArt(payment);
       } else {
         sendUsualNotification(payment);
       }
       return;
     }
-    if ("philipi4".equals(payment.getRecipientId())){
-      if (
-        payment.getAmount().getMajor() == 100
-      ) {
-        sendNotificationWithGeneratedArt(payment);
-      } else {
-        sendUsualNotification(payment);
-      }
-      return;
-    }
-    if ("batongleba".equals(payment.getRecipientId())) {
+    if ("batongleba".equals(payment.recipientId())) {
       sendNotificationWithGeneratedArt(payment);
       return;
     }

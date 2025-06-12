@@ -1,16 +1,19 @@
 package io.github.opendonationassistant.goal;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.config.ConfigCommandSender;
 import io.github.opendonationassistant.config.ConfigPutCommand;
 import io.github.opendonationassistant.events.goal.GoalSender;
-import io.github.opendonationassistant.reel.Widget;
-import io.github.opendonationassistant.reel.WidgetChangedEvent;
+import io.github.opendonationassistant.events.widget.Widget;
+import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
+import io.github.opendonationassistant.events.widget.WidgetConfig;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,62 +22,62 @@ public class GoalsWidgetConfigChangesListener {
 
   private static final String WIDGET_TYPE = "donationgoal";
 
-  private final Logger log = LoggerFactory.getLogger(
-    GoalsWidgetConfigChangesListener.class
-  );
+  private final ODALogger log = new ODALogger(this);
   private final GoalFactory goalFactory;
   private final ConfigCommandSender configCommandSender;
-  private final GoalSender goalSender;
 
   @Inject
   public GoalsWidgetConfigChangesListener(
     GoalFactory goalFactory,
-    ConfigCommandSender configCommandSender,
-    GoalSender goalSender
+    ConfigCommandSender configCommandSender
   ) {
     this.goalFactory = goalFactory;
     this.configCommandSender = configCommandSender;
-    this.goalSender = goalSender;
   }
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Configs.GOAL)
   public void listen(WidgetChangedEvent event) {
-    log.info("Received goals configuration: {}", event);
     if (event == null) {
       return;
     }
-    Widget widget = event.getWidget();
+    log.info("Received goals configuration", Map.of("event", event));
+    Widget widget = event.widget();
     if (widget == null) {
       return;
     }
-    if (!WIDGET_TYPE.equals(widget.getType())) {
+    if (!WIDGET_TYPE.equals(widget.type())) {
       return;
     }
-    if ("deleted".equals(event.getType())) {
+
+    if ("deleted".equals(event.type())) {
       goalFactory
-        .findFor(widget.getOwnerId())
+        .findFor(widget.ownerId())
         .stream()
-        .filter(goal -> widget.getId().equals(goal.getWidgetId()))
-        .forEach(Goal::delete);
+        .filter(goal -> widget.id().equals(goal.getWidgetId()))
+        .forEach(goal -> {
+          goal.delete();
+        });
     }
-    List<Goal> savedGoals = goalFactory.findFor(widget.getOwnerId());
-    if (!"deleted".equals(event.getType())) {
+
+    List<Goal> savedGoals = goalFactory.findFor(widget.ownerId());
+
+    if ("updated".equals(event.type()) || "toggled".equals(event.type())) {
       List<Goal> updatedGoals = new ArrayList<>();
       widget
-        .getConfig()
-        .getProperties()
+        .config()
+        .properties()
         .stream()
         .forEach(property -> {
-          if ("goal".equals(property.getName())) {
-            var goals = (List<Map<String, Object>>) property.getValue();
+          if ("goal".equals(property.name())) {
+            var goals = (List<Map<String, Object>>) property.value();
             updatedGoals.addAll(
               goals
                 .stream()
                 .map(config -> {
                   var id = (String) config.get("id");
                   return goalFactory
-                    .getBy(widget.getOwnerId(), widget.getId(), id)
-                    .update(config);
+                    .getBy(widget.ownerId(), widget.id(), id)
+                    .update(widget.enabled(), config);
                 })
                 .toList()
             );
@@ -82,7 +85,7 @@ public class GoalsWidgetConfigChangesListener {
         });
       savedGoals
         .stream()
-        .filter(goal -> widget.getId().equals(goal.getWidgetId()))
+        .filter(goal -> widget.id().equals(goal.getWidgetId()))
         .filter(goal ->
           updatedGoals
             .stream()
@@ -92,11 +95,17 @@ public class GoalsWidgetConfigChangesListener {
         )
         .forEach(Goal::delete);
     }
-    savedGoals = goalFactory.findFor(widget.getOwnerId());
+
+    savedGoals = goalFactory
+      .findFor(widget.ownerId())
+      .stream()
+      .filter(goal -> goal.getEnabled())
+      .toList();
+
     var command = new ConfigPutCommand();
     command.setKey("goals");
     command.setValue(savedGoals);
-    command.setOwnerId(widget.getOwnerId());
+    command.setOwnerId(widget.ownerId());
     command.setName("paymentpage");
     configCommandSender.send(command);
   }

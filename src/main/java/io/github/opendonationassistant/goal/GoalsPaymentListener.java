@@ -49,7 +49,7 @@ public class GoalsPaymentListener {
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification for goal: {}", payment);
 
-    Optional<Goal> oldGoal = Optional.ofNullable(payment.getGoal()).flatMap(
+    Optional<Goal> oldGoal = Optional.ofNullable(payment.goal()).flatMap(
       goalFactory::getBy
     );
     // TODO: optimize
@@ -57,11 +57,11 @@ public class GoalsPaymentListener {
     );
 
     // TODO: make one flow
-    List<Goal> savedGoals = goalFactory.findFor(payment.getRecipientId());
+    List<Goal> savedGoals = goalFactory.findFor(payment.recipientId());
     var command = new ConfigPutCommand();
     command.setKey("goals");
     command.setValue(savedGoals);
-    command.setOwnerId(payment.getRecipientId());
+    command.setOwnerId(payment.recipientId());
     command.setName("paymentpage");
     configCommandSender.send(command);
 
@@ -69,12 +69,13 @@ public class GoalsPaymentListener {
       .map(goal -> goal.getWidgetId())
       .ifPresent(widgetId -> {
         List<Goal> goalList = goalFactory.findFor(
-          payment.getRecipientId(),
+          payment.recipientId(),
           widgetId
         );
-        var goals = new WidgetProperty();
-        goals.setName("goal");
-        goals.setValue(
+        var goals = new WidgetProperty(
+          "goal",
+          "Цель",
+          "",
           goalList
             .stream()
             .map(Goal::asWidgetConfigGoal)
@@ -90,8 +91,7 @@ public class GoalsPaymentListener {
               }
             )
         );
-        var patch = new WidgetConfig();
-        patch.setProperties(List.of(goals));
+        var patch = new WidgetConfig(List.of(goals));
         widgetCommandSender.send(new WidgetUpdateCommand(widgetId, patch));
       });
 
@@ -101,7 +101,7 @@ public class GoalsPaymentListener {
       .map(goal -> goal.createUpdateCommand())
       .ifPresent(updateCommand ->
         goalCommandSender.send(
-          "%sgoal".formatted(payment.getRecipientId()),
+          "%sgoal".formatted(payment.recipientId()),
           updateCommand
         )
       );

@@ -29,19 +29,25 @@ public class DonatonConfigListener {
     if (event == null) {
       return;
     }
-    var widget = event.getWidget();
+    var widget = event.widget();
     if (widget == null) {
       return;
     }
 
-    if (!WIDGET_TYPE.equals(widget.getType())) {
+    if (!WIDGET_TYPE.equals(widget.type())) {
       return;
     }
 
-    if (!"deleted".equals(event.getType())) {
+    if ("deleted".equals(event.type())) {
       repository
-        .byId(widget.getOwnerId(), widget.getId())
-        .update(widget.getConfig());
+        .byId(widget.ownerId(), widget.id())
+        .update(widget.config());
+    }
+
+    if (!"deleted".equals(event.type())) {
+      repository
+        .byId(widget.ownerId(), widget.id())
+        .update(widget.config());
     }
   }
 }

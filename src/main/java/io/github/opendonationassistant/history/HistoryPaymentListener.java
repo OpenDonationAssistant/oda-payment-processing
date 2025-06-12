@@ -32,15 +32,15 @@ public class HistoryPaymentListener {
 
     var partial = new HistoryItemData();
     partial.setId(Generators.timeBasedEpochGenerator().generate().toString());
-    partial.setAmount(payment.getAmount());
-    partial.setMessage(payment.getMessage());
-    partial.setNickname(payment.getNickname());
-    partial.setPaymentId(payment.getId());
-    partial.setRecipientId(payment.getRecipientId());
-    partial.setAuthorizationTimestamp(payment.getAuthorizationTimestamp());
+    partial.setAmount(payment.amount());
+    partial.setMessage(payment.message());
+    partial.setNickname(payment.nickname());
+    partial.setPaymentId(payment.id());
+    partial.setRecipientId(payment.recipientId());
+    partial.setAuthorizationTimestamp(payment.authorizationTimestamp());
 
     payment
-      .getAttachments()
+      .attachments()
       .stream()
       .map(attachmentId -> {
         var attachment = new Attachment();
@@ -49,11 +49,11 @@ public class HistoryPaymentListener {
       });
 
     Optional
-      .ofNullable(payment.getGoal())
+      .ofNullable(payment.goal())
       .flatMap(goalFactory::getBy)
       .ifPresent(goal -> {
         var targetGoal = new TargetGoal();
-        targetGoal.setGoalId(payment.getGoal());
+        targetGoal.setGoalId(payment.goal());
         targetGoal.setGoalTitle(goal.getBriefDescription());
         partial.setGoals(List.of(targetGoal));
       });

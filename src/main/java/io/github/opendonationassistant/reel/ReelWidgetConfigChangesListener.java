@@ -1,5 +1,6 @@
 package io.github.opendonationassistant.reel;
 
+import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -27,17 +28,17 @@ public class ReelWidgetConfigChangesListener {
     if (event == null) {
       return;
     }
-    var widget = event.getWidget();
+    var widget = event.widget();
     if (widget == null) {
       return;
     }
-    if (!WIDGET_TYPE.equals(widget.getType())) {
+    if (!WIDGET_TYPE.equals(widget.type())) {
       return;
     }
-    if (!"deleted".equals(event.getType())) {
+    if (!"deleted".equals(event.type())) {
       reelFactory
-        .getBy(widget.getOwnerId(), widget.getId())
-        .update(widget.getConfig());
+        .getBy(widget.ownerId(), widget.id())
+        .update(widget);
     }
   }
 }
