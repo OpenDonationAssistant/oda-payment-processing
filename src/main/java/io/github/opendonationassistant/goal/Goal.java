@@ -54,13 +54,13 @@ public class Goal extends GoalData {
   public Goal update(Boolean enabled, Map<String, Object> config) {
     var fullDescription = (String) config.getOrDefault("fullDescription", "");
     var briefDescription = (String) config.getOrDefault("briefDescription", "");
-    var amount = Optional.ofNullable((Amount) config.get("requiredAmount"))
-      .map(Amount::getMajor)
+    var amount = Optional.ofNullable((Map<String, Object>) config.get("requiredAmount"))
+      .map(it -> (Integer)it.get("major"))
       .orElse(0);
     var accumulatedAmount = Optional.ofNullable(
-      (Amount) config.get("accumulatedAmount")
+      (Map<String, Object>) config.get("accumulatedAmount")
     )
-      .map(Amount::getMajor)
+      .map(it -> (Integer)it.get("major"))
       .orElse(0);
 
     var isDefault = (Boolean) config.getOrDefault("default", false);
