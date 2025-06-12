@@ -25,6 +25,7 @@ public class Goal extends GoalData {
     String recipientId,
     String goalId,
     Boolean isDefault,
+    Boolean isEnabled,
     GoalCommandSender commandSender,
     GoalRepository repository
   ) {
@@ -36,6 +37,7 @@ public class Goal extends GoalData {
     this.setRequiredAmount(new Amount(0, 0, "RUB"));
     this.setAccumulatedAmount(new Amount(0, 0, "RUB"));
     this.setDefault(isDefault);
+    this.setEnabled(isEnabled);
   }
 
   public Goal handlePayment(CompletedPaymentNotification payment) {

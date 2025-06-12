@@ -1,15 +1,14 @@
 package io.github.opendonationassistant.goal;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GoalFactory {
 
-  private Logger log = LoggerFactory.getLogger(GoalFactory.class);
+  private ODALogger log = new ODALogger(this);
 
   private final GoalRepository repository;
   private final GoalCommandSender commandSender;
@@ -33,19 +32,18 @@ public class GoalFactory {
           recipientId,
           goalId,
           false,
+          true,
           commandSender,
           repository
         );
-        log.info("Created goal: {}", newGoal);
+        log.info("Created goal", Map.of("goal", newGoal));
         repository.save(newGoal);
         return newGoal;
       });
   }
 
   public Optional<Goal> getBy(String goalId) {
-    return repository
-      .getById(goalId)
-      .map(this::from);
+    return repository.getById(goalId).map(this::from);
   }
 
   public List<Goal> findFor(String recipientId) {
@@ -70,6 +68,7 @@ public class GoalFactory {
       data.getRecipientId(),
       data.getId(),
       data.isDefault(),
+      data.getEnabled(),
       commandSender,
       repository
     );
