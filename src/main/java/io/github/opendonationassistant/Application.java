@@ -1,11 +1,14 @@
 package io.github.opendonationassistant;
 
 import io.github.opendonationassistant.rabbit.RabbitConfiguration;
+import io.github.opendonationassistant.rabbit.RabbitExceptionHandler;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;
 import io.micronaut.context.annotation.ContextConfigurer;
+import io.micronaut.context.annotation.Replaces;
 import io.micronaut.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.exception.DefaultRabbitListenerExceptionHandler;
 import io.micronaut.runtime.Micronaut;
 import jakarta.inject.Singleton;
 
@@ -22,8 +25,7 @@ public class Application {
   }
 
   public static void main(String[] args) {
-    ApplicationContext context = Micronaut
-      .build(args)
+    ApplicationContext context = Micronaut.build(args)
       .mainClass(Application.class)
       .banner(false)
       .start();
@@ -33,5 +35,11 @@ public class Application {
   @Singleton
   public ChannelInitializer rabbitConfiguration() {
     return new RabbitConfiguration();
+  }
+
+  @Replaces(DefaultRabbitListenerExceptionHandler.class)
+  @Singleton
+  public RabbitExceptionHandler rabbitExceptionHandler() {
+    return new RabbitExceptionHandler();
   }
 }
