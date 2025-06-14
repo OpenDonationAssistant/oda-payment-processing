@@ -39,7 +39,7 @@ public class HistoryPaymentListener {
     partial.setRecipientId(payment.recipientId());
     partial.setAuthorizationTimestamp(payment.authorizationTimestamp());
 
-    Optional.of(payment.attachments())
+    Optional.ofNullable(payment.attachments())
       .orElse(List.of())
       .stream()
       .map(attachmentId -> {
