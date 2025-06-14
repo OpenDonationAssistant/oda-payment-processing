@@ -39,8 +39,8 @@ public class HistoryPaymentListener {
     partial.setRecipientId(payment.recipientId());
     partial.setAuthorizationTimestamp(payment.authorizationTimestamp());
 
-    payment
-      .attachments()
+    Optional.of(payment.attachments())
+      .orElse(List.of())
       .stream()
       .map(attachmentId -> {
         var attachment = new Attachment();
@@ -48,8 +48,7 @@ public class HistoryPaymentListener {
         return attachment;
       });
 
-    Optional
-      .ofNullable(payment.goal())
+    Optional.ofNullable(payment.goal())
       .flatMap(goalFactory::getBy)
       .ifPresent(goal -> {
         var targetGoal = new TargetGoal();
