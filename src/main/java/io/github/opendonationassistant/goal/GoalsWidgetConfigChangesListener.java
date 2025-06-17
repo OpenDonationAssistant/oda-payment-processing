@@ -71,7 +71,8 @@ public class GoalsWidgetConfigChangesListener {
           if ("goal".equals(property.name())) {
             var goals = (List<Map<String, Object>>) property.value();
             updatedGoals.addAll(
-              goals
+              Optional.ofNullable(goals)
+                .orElse(List.of())
                 .stream()
                 .map(config -> {
                   var id = (String) config.get("id");
