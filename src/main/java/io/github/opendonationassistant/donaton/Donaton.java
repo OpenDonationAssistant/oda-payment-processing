@@ -1,5 +1,7 @@
 package io.github.opendonationassistant.donaton;
 
+import io.github.opendonationassistant.commons.ToString;
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.donaton.repository.DonatonData;
 import io.github.opendonationassistant.donaton.repository.DonatonDataRepository;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
@@ -7,7 +9,6 @@ import io.github.opendonationassistant.events.widget.WidgetCommandSender;
 import io.github.opendonationassistant.events.widget.WidgetConfig;
 import io.github.opendonationassistant.events.widget.WidgetProperty;
 import io.github.opendonationassistant.events.widget.WidgetUpdateCommand;
-import io.micronaut.serde.ObjectMapper;
 import io.micronaut.serde.annotation.Serdeable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,16 +16,14 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Serdeable
 public class Donaton {
 
+  private final ODALogger log = new ODALogger(this);
   private DonatonData data;
   private DonatonDataRepository repository;
   private WidgetCommandSender commandSender;
-  private Logger log = LoggerFactory.getLogger(Donaton.class);
   private DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
 
   public Donaton(
@@ -41,10 +40,9 @@ public class Donaton {
     var currency = notification.amount().getCurrency();
     var rate = data.getSecondsPerDonation().get(currency);
     if (rate == null) {
-      log.warn(
-        "No rate for currency {} and recipient {}",
-        currency,
-        notification.recipientId()
+      log.info(
+        "No rate found",
+        Map.of("currency", currency, "recipientId", notification.recipientId())
       );
       return;
     }
@@ -110,16 +108,12 @@ public class Donaton {
           }
         }
       });
-    log.info("Update donaton to {}", this.data);
+    log.info("Update donaton", Map.of("update", this.data));
     repository.update(this.data);
   }
 
   @Override
   public String toString() {
-    try {
-      return ObjectMapper.getDefault().writeValueAsString(this);
-    } catch (Exception e) {
-      return "Can't serialize DonatonData: " + e.getMessage();
-    }
+    return ToString.asJson(this);
   }
 }

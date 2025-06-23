@@ -6,6 +6,7 @@ import io.github.opendonationassistant.goal.GoalFactory;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class HistoryPaymentListener {
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Payments.HISTORY)
   public void listen(CompletedPaymentNotification payment) {
-    log.info("Received notification: {}", payment);
+    log.info("Received notification for history", Map.of("payment", payment));
 
     var partial = new HistoryItemData();
     partial.setId(Generators.timeBasedEpochGenerator().generate().toString());

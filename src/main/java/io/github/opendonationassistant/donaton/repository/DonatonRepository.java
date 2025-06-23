@@ -1,18 +1,18 @@
 package io.github.opendonationassistant.donaton.repository;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.donaton.Donaton;
 import io.github.opendonationassistant.events.widget.WidgetCommandSender;
 import jakarta.inject.Inject;
 import java.time.Instant;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 public class DonatonRepository {
 
   private final DonatonDataRepository repository;
   private final WidgetCommandSender commandSender;
-  private Logger log = LoggerFactory.getLogger(DonatonRepository.class);
+  private final ODALogger log = new ODALogger(this);
 
   @Inject
   public DonatonRepository(
@@ -38,7 +38,7 @@ public class DonatonRepository {
         freshData.setRecipientId(recipientId);
         freshData.setId(id);
         freshData.setEndDate(Instant.now());
-        log.info("Creating new donaton: {}", freshData);
+        log.info("Creating new donaton", Map.of("data", freshData));
         repository.save(freshData);
         return new Donaton(freshData, repository, commandSender);
       });

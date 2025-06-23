@@ -5,6 +5,7 @@ import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class DonatonConfigListener {
 
   @Queue("config.donaton")
   public void listen(WidgetChangedEvent event) {
-    log.info("Received donaton configuration: {}", event);
+    log.info("Received donaton configuration", Map.of("event", event));
     if (event == null) {
       return;
     }
@@ -39,15 +40,11 @@ public class DonatonConfigListener {
     }
 
     if ("deleted".equals(event.type())) {
-      repository
-        .byId(widget.ownerId(), widget.id())
-        .update(widget.config());
+      repository.byId(widget.ownerId(), widget.id()).update(widget.config());
     }
 
     if (!"deleted".equals(event.type())) {
-      repository
-        .byId(widget.ownerId(), widget.id())
-        .update(widget.config());
+      repository.byId(widget.ownerId(), widget.id()).update(widget.config());
     }
   }
 }

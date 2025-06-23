@@ -1,16 +1,17 @@
 package io.github.opendonationassistant.reel;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import jakarta.inject.Inject;
 
 public class ReelFactory {
 
-  private Logger log = LoggerFactory.getLogger(ReelFactory.class);
-
+  private final ODALogger log = new ODALogger(this);
   private final ReelRepository repository;
   private final ReelCommandSender commandSender;
 
@@ -34,7 +35,7 @@ public class ReelFactory {
           recipientId,
           widgetId
         );
-        log.info("Create reel: {}", newReel);
+        log.info("Create reel", Map.of("reel", newReel));
         repository.save(newReel);
         return newReel;
       });

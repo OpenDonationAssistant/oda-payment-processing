@@ -1,16 +1,17 @@
 package io.github.opendonationassistant.reel;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 @RabbitListener
 public class ReelPaymentListener {
-  private Logger log = LoggerFactory.getLogger(ReelPaymentListener.class);
 
+  private final ODALogger log = new ODALogger(this);
   private final ReelFactory reelFactory;
 
   @Inject
@@ -20,7 +21,7 @@ public class ReelPaymentListener {
 
   @Queue("payments_for_reel")
   public void listen(CompletedPaymentNotification payment) {
-    log.info("Received notification: {}", payment);
+    log.info("Received notification", Map.of("payment", payment));
     reelFactory
       .findFor(payment.recipientId())
       .forEach(reel -> reel.handlePayment(payment));

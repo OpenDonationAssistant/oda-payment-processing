@@ -74,7 +74,8 @@ public class Reel extends ReelData {
 
   public void update(Widget widget) {
     setEnabled(widget.enabled());
-    widget.config()
+    widget
+      .config()
       .properties()
       .stream()
       .forEach(property -> {

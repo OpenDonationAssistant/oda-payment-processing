@@ -4,6 +4,7 @@ import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class ReelWidgetConfigChangesListener {
 
   @Queue("config.reel")
   public void listen(WidgetChangedEvent event) {
-    log.info("Received widget configuration: {}", event);
+    log.info("Received widget configuration", Map.of("event", event));
     if (event == null) {
       return;
     }
@@ -36,9 +37,7 @@ public class ReelWidgetConfigChangesListener {
       return;
     }
     if (!"deleted".equals(event.type())) {
-      reelFactory
-        .getBy(widget.ownerId(), widget.id())
-        .update(widget);
+      reelFactory.getBy(widget.ownerId(), widget.id()).update(widget);
     }
   }
 }
