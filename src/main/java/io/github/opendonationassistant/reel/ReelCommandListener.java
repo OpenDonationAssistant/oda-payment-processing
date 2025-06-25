@@ -1,9 +1,9 @@
 package io.github.opendonationassistant.reel;
 
-import io.github.opendonationassistant.history.HistoryCommand;
-import io.github.opendonationassistant.history.HistoryCommandSender;
-import io.github.opendonationassistant.history.HistoryItemData;
-import io.github.opendonationassistant.history.ReelResult;
+import io.github.opendonationassistant.events.history.HistoryCommand;
+import io.github.opendonationassistant.events.history.HistoryCommandSender;
+import io.github.opendonationassistant.events.history.HistoryItemData;
+import io.github.opendonationassistant.events.history.ReelResult;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
