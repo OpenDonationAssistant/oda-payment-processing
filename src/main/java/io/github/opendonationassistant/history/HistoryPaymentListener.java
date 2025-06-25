@@ -44,9 +44,7 @@ public class HistoryPaymentListener {
       .orElse(List.of())
       .stream()
       .map(attachmentId -> {
-        var attachment = new Attachment();
-        attachment.setId(attachmentId);
-        return attachment;
+        return new Attachment(null, attachmentId, null);
       });
 
     Optional.ofNullable(payment.goal())
@@ -58,9 +56,6 @@ public class HistoryPaymentListener {
         partial.setGoals(List.of(targetGoal));
       });
 
-    var command = new HistoryCommand();
-    command.setType("update");
-    command.setPartial(partial);
-    commandSender.send("history", command);
+    commandSender.send("history", new HistoryCommand("update", partial));
   }
 }
