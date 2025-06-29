@@ -95,23 +95,6 @@ public class AlertPaymentListener {
       sendUsualNotification(payment);
       return;
     }
-    if ("tabularussia".equals(payment.recipientId())) {
-      if (
-        payment.amount().getMajor() > 499 && payment.amount().getMajor() < 1000
-      ) {
-        if (
-          payment.amount().getMajor() != 666 &&
-          payment.amount().getMajor() != 777
-        ) {
-          sendNotificationWithGeneratedArt(payment);
-        } else {
-          sendUsualNotification(payment);
-        }
-      } else {
-        sendUsualNotification(payment);
-      }
-      return;
-    }
     if ("philipi4".equals(payment.recipientId())) {
       if (payment.amount().getMajor() == 100) {
         sendNotificationWithGeneratedArt(payment);
