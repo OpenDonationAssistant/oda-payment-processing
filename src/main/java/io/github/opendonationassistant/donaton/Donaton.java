@@ -79,19 +79,19 @@ public class Donaton {
           String unit = (String) price.get("unit");
           Integer amount = (Integer) price.get("price");
           if ("10MIN".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 10).divide( BigDecimal.valueOf(amount));
+            var rate = BigDecimal.valueOf(60 * 10).divide( BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("MIN".equals(unit)) {
-            var rate = BigDecimal.valueOf(60).divide(BigDecimal.valueOf(amount));
+            var rate = BigDecimal.valueOf(60).divide(BigDecimal.valueOf(amount), 5 , RoundingMode.HALF_UP);
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("HOUR".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 60).divide(BigDecimal.valueOf(amount));
+            var rate = BigDecimal.valueOf(60 * 60).divide(BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("DAY".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 60 * 24).divide(BigDecimal.valueOf(amount));
+            var rate = BigDecimal.valueOf(60 * 60 * 24).divide(BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
             this.data.setSecondsPerDonation(Map.of("RUB", rate));
           }
         }
