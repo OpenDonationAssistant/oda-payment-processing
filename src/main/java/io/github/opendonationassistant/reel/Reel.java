@@ -56,7 +56,6 @@ public class Reel extends ReelData {
       Map.of("payment", payment, "reel", this)
     );
     if (
-      EACH_PAYMENT_CONDITION.equals(getCondition()) &&
       payment.amount().getMajor() >= getRequiredAmount().getMajor()
     ) {
       var command = new ReelCommand();

@@ -1,5 +1,6 @@
 package io.github.opendonationassistant.reel;
 
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
@@ -12,10 +13,8 @@ import org.slf4j.LoggerFactory;
 public class ReelWidgetConfigChangesListener {
 
   private static final String WIDGET_TYPE = "reel";
+  private final ODALogger log = new ODALogger(this);
 
-  private final Logger log = LoggerFactory.getLogger(
-    ReelWidgetConfigChangesListener.class
-  );
   private final ReelFactory reelFactory;
 
   @Inject
@@ -25,7 +24,7 @@ public class ReelWidgetConfigChangesListener {
 
   @Queue("config.reel")
   public void listen(WidgetChangedEvent event) {
-    log.info("Received widget configuration", Map.of("event", event));
+    log.debug("Received widget configuration", Map.of("event", event));
     if (event == null) {
       return;
     }
