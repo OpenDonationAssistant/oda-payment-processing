@@ -13,3 +13,4 @@ jobs:
     with:
       service: payment-processing
       version: "${{ github.RUN_NUMBER }}"
+      npm: false
