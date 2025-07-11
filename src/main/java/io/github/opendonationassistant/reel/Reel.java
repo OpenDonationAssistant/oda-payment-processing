@@ -50,7 +50,7 @@ public class Reel extends ReelData {
   public void handlePayment(CompletedPaymentNotification payment) {
     log.info(
       "Handling payment for reel",
-      Map.of("payment", payment, "reel", this, "condition", getCondition(), "amount", getRequiredAmount())
+      Map.of("payment", payment, "reel", this)
     );
     if (payment == null) {
       return;
