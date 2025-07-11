@@ -48,13 +48,13 @@ public class Reel extends ReelData {
   }
 
   public void handlePayment(CompletedPaymentNotification payment) {
+    if (payment == null) {
+      return;
+    }
     log.info(
       "Handling payment for reel",
       Map.of("payment", payment, "reel", this)
     );
-    if (payment == null) {
-      return;
-    }
     if (
       EACH_PAYMENT_CONDITION.equals(getCondition()) &&
       payment.amount().getMajor() >= getRequiredAmount().getMajor()
