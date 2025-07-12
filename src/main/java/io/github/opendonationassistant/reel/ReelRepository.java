@@ -61,6 +61,7 @@ public class ReelRepository {
   }
 
   private Reel from(ReelData data) {
+    log.debug("Found data", Map.of("data", data));
     return new Reel(data, commandSender, repository);
   }
 }
