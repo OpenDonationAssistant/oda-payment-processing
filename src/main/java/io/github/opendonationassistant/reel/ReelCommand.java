@@ -89,23 +89,4 @@ public class ReelCommand {
     } else if (!recipientId.equals(other.recipientId)) return false;
     return true;
   }
-
-  @Override
-  public String toString() {
-    return (
-      "{\"_type\"=\"ReelCommand\",\"type\"=\"" +
-      type +
-      "\", selection\"=\"" +
-      selection +
-      "\", widgetId\"=\"" +
-      widgetId +
-      "\", paymentId\"=\"" +
-      paymentId +
-      "\", recipientId\"=\"" +
-      recipientId +
-      "\", getWidgetId()\"=\"" +
-      getWidgetId() +
-      "}"
-    );
-  }
 }

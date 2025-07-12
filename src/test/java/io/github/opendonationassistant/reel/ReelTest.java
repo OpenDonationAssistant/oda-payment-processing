@@ -20,7 +20,6 @@ public class ReelTest {
       new ReelData(
         "id",
         "testuser",
-        ReelData.EACH_PAYMENT_CONDITION,
         "widgetId",
         new Amount(0, 0, "RUB"),
         new Amount(300, 0, "RUB"),

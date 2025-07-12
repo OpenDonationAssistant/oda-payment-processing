@@ -13,7 +13,6 @@ import java.util.List;
 public record ReelData(
   @Id String id,
   String recipientId,
-  String condition,
   String widgetConfigId,
   Amount accumulatedAmount,
   Amount requiredAmount,
@@ -28,7 +27,6 @@ public record ReelData(
     return new ReelData(
       id,
       recipientId,
-      condition,
       widgetConfigId,
       accumulatedAmount,
       requiredAmount,
@@ -41,7 +39,6 @@ public record ReelData(
     return new ReelData(
       id,
       recipientId,
-      condition,
       widgetConfigId,
       accumulatedAmount,
       requiredAmount,
@@ -54,7 +51,6 @@ public record ReelData(
     return new ReelData(
       id,
       recipientId,
-      condition,
       widgetConfigId,
       accumulatedAmount,
       value,

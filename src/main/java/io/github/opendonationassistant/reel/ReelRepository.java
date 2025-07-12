@@ -41,7 +41,6 @@ public class ReelRepository {
     var created = new ReelData(
       Generators.timeBasedEpochGenerator().generate().toString(),
       recipientId,
-      ReelData.EACH_PAYMENT_CONDITION,
       widget.id(),
       new Amount(0, 0, "RUB"),
       new Amount(0, 0, "RUB"),
