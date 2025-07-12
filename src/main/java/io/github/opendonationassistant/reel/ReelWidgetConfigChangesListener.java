@@ -15,11 +15,11 @@ public class ReelWidgetConfigChangesListener {
   private static final String WIDGET_TYPE = "reel";
   private final ODALogger log = new ODALogger(this);
 
-  private final ReelFactory reelFactory;
+  private final ReelRepository reels;
 
   @Inject
-  public ReelWidgetConfigChangesListener(ReelFactory reelFactory) {
-    this.reelFactory = reelFactory;
+  public ReelWidgetConfigChangesListener(ReelRepository reels) {
+    this.reels = reels;
   }
 
   @Queue("config.reel")
@@ -36,7 +36,12 @@ public class ReelWidgetConfigChangesListener {
       return;
     }
     if (!"deleted".equals(event.type())) {
-      reelFactory.getBy(widget.ownerId(), widget.id()).update(widget);
+      reels
+        .getBy(widget.ownerId(), widget.id())
+        .ifPresent(reel -> reel.update(widget));
+    }
+    if ("deleted".equals(event.type())) {
+      reels.delete(widget.ownerId(), widget.id());
     }
   }
 }

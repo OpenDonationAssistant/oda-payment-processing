@@ -1,96 +1,65 @@
 package io.github.opendonationassistant.reel;
 
 import io.github.opendonationassistant.commons.Amount;
-import io.github.opendonationassistant.commons.ToString;
 import io.github.opendonationassistant.utils.StringListConverter;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.MappedProperty;
 import io.micronaut.serde.annotation.Serdeable;
-
 import java.util.List;
 
 @Serdeable
 @MappedEntity("reel")
-public class ReelData {
+public record ReelData(
+  @Id String id,
+  String recipientId,
+  String condition,
+  String widgetConfigId,
+  Amount accumulatedAmount,
+  Amount requiredAmount,
+  @MappedProperty(converter = StringListConverter.class) List<String> items,
+  Boolean enabled
+) {
+  public static final String EACH_PAYMENT_CONDITION = "eachpayment";
+  public static final String SUM_AMOUNT_CONDITION = "sum";
+  public static final String NOOP_CONDITION = "noop";
 
-  @Id
-  private String id;
-  private String recipientId;
-  private String condition;
-  private String widgetConfigId;
-  private Amount accumulatedAmount;
-  private Amount requiredAmount;
-  @MappedProperty(converter = StringListConverter.class)
-  private List<String> items;
-  private Boolean enabled;
-
-  public String getRecipientId() {
-    return recipientId;
+  public ReelData withEnabled(boolean value) {
+    return new ReelData(
+      id,
+      recipientId,
+      condition,
+      widgetConfigId,
+      accumulatedAmount,
+      requiredAmount,
+      items,
+      value
+    );
   }
 
-  public void setRecipientId(String recipientId) {
-    this.recipientId = recipientId;
+  public ReelData withItems(List<String> value) {
+    return new ReelData(
+      id,
+      recipientId,
+      condition,
+      widgetConfigId,
+      accumulatedAmount,
+      requiredAmount,
+      value,
+      enabled
+    );
   }
 
-  public String getCondition() {
-    return condition;
-  }
-
-  public void setCondition(String condition) {
-    this.condition = condition;
-  }
-
-  public Amount getAccumulatedAmount() {
-    return accumulatedAmount;
-  }
-
-  public void setAccumulatedAmount(Amount accumulatedAmount) {
-    this.accumulatedAmount = accumulatedAmount;
-  }
-
-  public Amount getRequiredAmount() {
-    return requiredAmount;
-  }
-
-  public void setRequiredAmount(Amount requiredAmount) {
-    this.requiredAmount = requiredAmount;
-  }
-
-  public List<String> getItems() {
-    return items;
-  }
-
-  public void setItems(List<String> items) {
-    this.items = items;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getWidgetConfigId() {
-    return widgetConfigId;
-  }
-
-  public void setWidgetConfigId(String widgetConfigId) {
-    this.widgetConfigId = widgetConfigId;
-  }
-
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  @Override
-  public String toString() {
-    return ToString.asJson(this);
+  public ReelData withRequiredAmount(Amount value) {
+    return new ReelData(
+      id,
+      recipientId,
+      condition,
+      widgetConfigId,
+      accumulatedAmount,
+      value,
+      items,
+      enabled
+    );
   }
 }

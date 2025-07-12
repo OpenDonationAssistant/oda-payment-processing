@@ -14,13 +14,22 @@ public class ReelTest {
   @Test
   public void testSendingCommandWhenTriggerForEachPayment() {
     var commandSender = mock(ReelCommandSender.class);
-    var repository = mock(ReelRepository.class);
+    var repository = mock(ReelDataRepository.class);
 
-    var reel = new Reel(commandSender, repository, "testuser", "widgetId");
-    reel.setAccumulatedAmount(new Amount(0, 0, "RUB"));
-    reel.setRequiredAmount(new Amount(300, 0, "RUB"));
-    reel.setCondition(Reel.EACH_PAYMENT_CONDITION);
-    reel.setItems(List.of("test1"));
+    var reel = new Reel(
+      new ReelData(
+        "id",
+        "testuser",
+        ReelData.EACH_PAYMENT_CONDITION,
+        "widgetId",
+        new Amount(0, 0, "RUB"),
+        new Amount(300, 0, "RUB"),
+        List.of("test1"),
+        true
+      ),
+      commandSender,
+      repository
+    );
 
     var expectedCommand = new ReelCommand();
     expectedCommand.setType(ReelCommand.TRIGGER_TYPE);

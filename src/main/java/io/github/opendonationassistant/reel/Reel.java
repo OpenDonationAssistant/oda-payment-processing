@@ -1,67 +1,54 @@
 package io.github.opendonationassistant.reel;
 
-import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.Amount;
-import io.github.opendonationassistant.commons.ToString;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.github.opendonationassistant.events.widget.Widget;
-import io.micronaut.data.annotation.Transient;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
-public class Reel extends ReelData {
+public class Reel {
 
   private ODALogger log = new ODALogger(this);
 
-  public static final String EACH_PAYMENT_CONDITION = "eachpayment";
-  public static final String SUM_AMOUNT_CONDITION = "sum";
-  public static final String NOOP_CONDITION = "noop";
-
-  @Transient
+  private final ReelData data;
   private final ReelCommandSender commandSender;
-
-  @Transient
+  private final ReelDataRepository repository;
   private final Random random;
 
-  @Transient
-  private final ReelRepository repository;
-
   public Reel(
+    ReelData data,
     ReelCommandSender commandSender,
-    ReelRepository repository,
-    String recipientId,
-    String widgetId
+    ReelDataRepository repository
   ) {
-    Objects.requireNonNull(commandSender, "ReelCommandSender is required");
-    this.setWidgetConfigId(widgetId);
-    this.setRecipientId(recipientId);
+    this.data = data;
     this.commandSender = commandSender;
     this.repository = repository;
     this.random = new Random();
-    this.setId(Generators.timeBasedEpochGenerator().generate().toString());
-    this.setItems(List.of());
-    this.setRequiredAmount(new Amount(0, 0, "RUB"));
-    this.setAccumulatedAmount(new Amount(0, 0, "RUB"));
   }
 
   public void handlePayment(CompletedPaymentNotification payment) {
     if (payment == null) {
       return;
     }
+    if (data.items() == null || data.items().isEmpty()) {
+      return;
+    }
+    if (!data.enabled()){
+      return;
+    }
     log.info(
       "Handling payment for reel",
       Map.of("payment", payment, "reel", this)
     );
-    if (
-      payment.amount().getMajor() >= getRequiredAmount().getMajor()
-    ) {
+    if (payment.amount().getMajor() >= data.requiredAmount().getMajor()) {
       var command = new ReelCommand();
       command.setType("trigger");
-      command.setSelection(getItems().get(random.nextInt(getItems().size())));
-      command.setWidgetId(getWidgetConfigId());
+      command.setSelection(
+        data.items().get(random.nextInt(data.items().size()))
+      );
+      command.setWidgetId(data.widgetConfigId());
       command.setPaymentId(payment.id());
       command.setRecipientId(payment.recipientId());
       log.info("Send reel command", Map.of("command", command));
@@ -69,33 +56,30 @@ public class Reel extends ReelData {
     }
   }
 
-  public void select(List<String> items) {}
-
-  public void update(Widget widget) {
-    setEnabled(widget.enabled());
-    widget
+  public Reel update(Widget widget) {
+    var updatedData = widget
       .config()
       .properties()
       .stream()
-      .forEach(property -> {
-        if ("type".equals(property.name())) {
-          this.setCondition((String) property.value());
-        }
-        if ("optionList".equals(property.name())) {
-          this.setItems((List<String>) property.value());
-        }
-        if ("requiredAmount".equals(property.name())) {
-          this.setRequiredAmount(
+      .reduce(
+        data,
+        (data, property) -> {
+          if ("optionList".equals(property.name())) {
+            return data.withItems((List<String>) property.value());
+          }
+          if ("requiredAmount".equals(property.name())) {
+            return data.withRequiredAmount(
               new Amount((Integer) property.value(), 0, "RUB")
             );
+          }
+          return data;
+        },
+        (first, second) -> {
+          return first;
         }
-      });
-    log.info("Update reel", Map.of("reel", this));
-    repository.update(this);
-  }
-
-  @Override
-  public String toString() {
-    return ToString.asJson(this);
+      );
+    log.info("Update reel", Map.of("data", updatedData));
+    repository.update(updatedData);
+    return new Reel(updatedData, commandSender, repository);
   }
 }
