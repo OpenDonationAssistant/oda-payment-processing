@@ -37,10 +37,10 @@ public class ReelRepository {
       });
   }
 
-  public Reel create(String recipientId, Widget widget) {
+  public Reel create(Widget widget) {
     var created = new ReelData(
       Generators.timeBasedEpochGenerator().generate().toString(),
-      recipientId,
+      widget.ownerId(),
       widget.id(),
       new Amount(0, 0, "RUB"),
       new Amount(0, 0, "RUB"),

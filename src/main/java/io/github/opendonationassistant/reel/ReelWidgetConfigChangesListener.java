@@ -35,7 +35,10 @@ public class ReelWidgetConfigChangesListener {
     if (!WIDGET_TYPE.equals(widget.type())) {
       return;
     }
-    if (!"deleted".equals(event.type())) {
+    if ("created".equals(event.type())) {
+      reels.create(widget);
+    }
+    if ("updated".equals(event.type())) {
       reels
         .getBy(widget.ownerId(), widget.id())
         .ifPresent(reel -> reel.update(widget));
