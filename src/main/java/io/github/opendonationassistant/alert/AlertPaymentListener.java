@@ -95,18 +95,18 @@ public class AlertPaymentListener {
       sendUsualNotification(payment);
       return;
     }
-    if ("philipi4".equals(payment.recipientId())) {
-      if (payment.amount().getMajor() == 100) {
-        sendNotificationWithGeneratedArt(payment);
-      } else {
-        sendUsualNotification(payment);
-      }
-      return;
-    }
-    if ("batongleba".equals(payment.recipientId())) {
-      sendNotificationWithGeneratedArt(payment);
-      return;
-    }
+    // if ("philipi4".equals(payment.recipientId())) {
+    //   if (payment.amount().getMajor() == 100) {
+    //     sendNotificationWithGeneratedArt(payment);
+    //   } else {
+    //     sendUsualNotification(payment);
+    //   }
+    //   return;
+    // }
+    // if ("batongleba".equals(payment.recipientId())) {
+    //   sendNotificationWithGeneratedArt(payment);
+    //   return;
+    // }
     sendUsualNotification(payment);
   }
 }
