@@ -4,6 +4,7 @@ import io.github.opendonationassistant.events.history.HistoryCommand;
 import io.github.opendonationassistant.events.history.HistoryCommandSender;
 import io.github.opendonationassistant.events.history.HistoryItemData;
 import io.github.opendonationassistant.events.history.ReelResult;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -42,26 +43,31 @@ public class ReelCommandListener {
         });
     }
     if ("trigger".equals(command.getType())) {
-      HistoryItemData data = new HistoryItemData(
-        null,
-        command.getPaymentId(),
-        null,
-        null,
-        command.getRecipientId(),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        List.of(new ReelResult(command.getSelection()))
-      );
-      historyCommandSender.send(
-        "history",
-        new HistoryCommand("update", data, false, false, false, false, false)
-      );
+      if (
+        StringUtils.isNotEmpty(command.getPaymentId()) &&
+        StringUtils.isNotEmpty(command.getRecipientId())
+      ) {
+        HistoryItemData data = new HistoryItemData(
+          null,
+          command.getPaymentId(),
+          null,
+          null,
+          command.getRecipientId(),
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          List.of(new ReelResult(command.getSelection()))
+        );
+        historyCommandSender.send(
+          "history",
+          new HistoryCommand("update", data, false, false, false, false, false)
+        );
+      }
       commandSender.send("%sreel".formatted(command.getRecipientId()), command);
     }
   }
