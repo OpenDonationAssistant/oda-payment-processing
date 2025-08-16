@@ -58,26 +58,23 @@ public class Reel {
       command.setWidgetId(data.widgetConfigId());
       command.setPaymentId(payment.id());
       command.setRecipientId(payment.recipientId());
-      widgetSender.send(
-        new WidgetUpdateCommand(
-          data.widgetConfigId(),
-          new WidgetConfig(
-            List.of(
-              new WidgetProperty(
-                "requiredAmount",
-                "widget-reel-required-amount",
-                "number",
-                data.requiredAmount().getMajor() + data.stepAmount().getMajor()
+      final Integer step = data.stepAmount().getMajor();
+      if (step > 0) {
+        widgetSender.send(
+          new WidgetUpdateCommand(
+            data.widgetConfigId(),
+            new WidgetConfig(
+              List.of(
+                new WidgetProperty(
+                  "requiredAmount",
+                  "widget-reel-required-amount",
+                  "number",
+                  data.requiredAmount().getMajor() + step
+                )
               )
             )
           )
-        )
-      );
-      try {
-        Thread.sleep(30000);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        );
       }
       log.info("Send reel command", Map.of("command", command));
       commandSender.send("reel", command);
