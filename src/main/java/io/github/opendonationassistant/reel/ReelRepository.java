@@ -4,6 +4,7 @@ import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.widget.Widget;
+import io.github.opendonationassistant.events.widget.WidgetCommandSender;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +15,17 @@ public class ReelRepository {
   private final ODALogger log = new ODALogger(this);
   private final ReelDataRepository repository;
   private final ReelCommandSender commandSender;
+  private final WidgetCommandSender widgetSender;
 
   @Inject
   public ReelRepository(
     ReelDataRepository repository,
-    ReelCommandSender commandSender
+    ReelCommandSender commandSender,
+    WidgetCommandSender widgetSender
   ) {
     this.repository = repository;
     this.commandSender = commandSender;
+    this.widgetSender = widgetSender;
   }
 
   public Optional<Reel> getBy(String recipientId, String widgetId) {
@@ -44,6 +48,7 @@ public class ReelRepository {
       widget.id(),
       new Amount(0, 0, "RUB"),
       new Amount(0, 0, "RUB"),
+      new Amount(0, 0, "RUB"),
       List.of(),
       true
     );
@@ -62,6 +67,6 @@ public class ReelRepository {
 
   private Reel from(ReelData data) {
     log.debug("Found data", Map.of("data", data));
-    return new Reel(data, commandSender, repository);
+    return new Reel(data, commandSender, repository, widgetSender);
   }
 }

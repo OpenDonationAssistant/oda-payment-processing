@@ -26,15 +26,26 @@ public class ReelCommandListener {
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Commands.REEL)
   public void listen(ReelCommand command) {
-    HistoryCommand historyCommand = new HistoryCommand();
-    HistoryItemData data = new HistoryItemData();
-    data.setPaymentId(command.getPaymentId());
-    ReelResult result = new ReelResult();
-    result.setTitle(command.getSelection());
-    data.setReelResults(List.of(result));
-    historyCommand.setPartial(data);
-    historyCommand.setType("update");
-    historyCommandSender.send("history", historyCommand);
+    HistoryItemData data = new HistoryItemData(
+      null,
+      command.getPaymentId(),
+      null,
+      null,
+      command.getRecipientId(),
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      List.of(new ReelResult(command.getSelection()))
+    );
+    historyCommandSender.send(
+      "history",
+      new HistoryCommand("update", data, false, false, false, false, false)
+    );
     commandSender.send("%sreel".formatted(command.getRecipientId()), command);
   }
 }

@@ -4,6 +4,10 @@ import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.github.opendonationassistant.events.widget.Widget;
+import io.github.opendonationassistant.events.widget.WidgetCommandSender;
+import io.github.opendonationassistant.events.widget.WidgetConfig;
+import io.github.opendonationassistant.events.widget.WidgetProperty;
+import io.github.opendonationassistant.events.widget.WidgetUpdateCommand;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -16,14 +20,17 @@ public class Reel {
   private final ReelCommandSender commandSender;
   private final ReelDataRepository repository;
   private final Random random;
+  private final WidgetCommandSender widgetSender;
 
   public Reel(
     ReelData data,
     ReelCommandSender commandSender,
-    ReelDataRepository repository
+    ReelDataRepository repository,
+    WidgetCommandSender widgetSender
   ) {
     this.data = data;
     this.commandSender = commandSender;
+    this.widgetSender = widgetSender;
     this.repository = repository;
     this.random = new Random();
   }
@@ -35,7 +42,7 @@ public class Reel {
     if (data.items() == null || data.items().isEmpty()) {
       return;
     }
-    if (!data.enabled()){
+    if (!data.enabled()) {
       return;
     }
     log.info(
@@ -51,6 +58,27 @@ public class Reel {
       command.setWidgetId(data.widgetConfigId());
       command.setPaymentId(payment.id());
       command.setRecipientId(payment.recipientId());
+      widgetSender.send(
+        new WidgetUpdateCommand(
+          data.widgetConfigId(),
+          new WidgetConfig(
+            List.of(
+              new WidgetProperty(
+                "requiredAmount",
+                "widget-reel-required-amount",
+                "number",
+                data.requiredAmount().getMajor() + data.stepAmount().getMajor()
+              )
+            )
+          )
+        )
+      );
+      try {
+        Thread.sleep(30000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       log.info("Send reel command", Map.of("command", command));
       commandSender.send("reel", command);
     }
@@ -72,6 +100,11 @@ public class Reel {
               new Amount((Integer) property.value(), 0, "RUB")
             );
           }
+          if ("stepAmount".equals(property.name())) {
+            return data.withStepAmount(
+              new Amount((Integer) property.value(), 0, "RUB")
+            );
+          }
           return data;
         },
         (first, second) -> {
@@ -80,6 +113,6 @@ public class Reel {
       );
     log.info("Update reel", Map.of("data", updatedData));
     repository.update(updatedData);
-    return new Reel(updatedData, commandSender, repository);
+    return new Reel(updatedData, commandSender, repository, widgetSender);
   }
 }

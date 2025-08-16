@@ -16,6 +16,7 @@ public record ReelData(
   String widgetConfigId,
   Amount accumulatedAmount,
   Amount requiredAmount,
+  Amount stepAmount,
   @MappedProperty(converter = StringListConverter.class) List<String> items,
   Boolean enabled
 ) {
@@ -30,6 +31,7 @@ public record ReelData(
       widgetConfigId,
       accumulatedAmount,
       requiredAmount,
+      stepAmount,
       items,
       value
     );
@@ -42,6 +44,7 @@ public record ReelData(
       widgetConfigId,
       accumulatedAmount,
       requiredAmount,
+      stepAmount,
       value,
       enabled
     );
@@ -53,6 +56,20 @@ public record ReelData(
       recipientId,
       widgetConfigId,
       accumulatedAmount,
+      value,
+      stepAmount,
+      items,
+      enabled
+    );
+  }
+
+  public ReelData withStepAmount(Amount value) {
+    return new ReelData(
+      id,
+      recipientId,
+      widgetConfigId,
+      accumulatedAmount,
+      requiredAmount,
       value,
       items,
       enabled

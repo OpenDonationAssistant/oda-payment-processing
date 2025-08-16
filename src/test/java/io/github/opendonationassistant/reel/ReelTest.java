@@ -5,6 +5,8 @@ import static org.mockito.Mockito.verify;
 
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.events.CompletedPaymentNotification;
+import io.github.opendonationassistant.events.widget.WidgetCommandSender;
+
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ public class ReelTest {
   public void testSendingCommandWhenTriggerForEachPayment() {
     var commandSender = mock(ReelCommandSender.class);
     var repository = mock(ReelDataRepository.class);
+    var configSender = mock(WidgetCommandSender.class);
 
     var reel = new Reel(
       new ReelData(
@@ -23,11 +26,13 @@ public class ReelTest {
         "widgetId",
         new Amount(0, 0, "RUB"),
         new Amount(300, 0, "RUB"),
+        new Amount(300, 0, "RUB"),
         List.of("test1"),
         true
       ),
       commandSender,
-      repository
+      repository,
+      configSender
     );
 
     var expectedCommand = new ReelCommand();
