@@ -35,6 +35,10 @@ public class Reel {
     this.random = new Random();
   }
 
+  public String run(){
+    return data.items().get(random.nextInt(data.items().size()));
+  }
+
   public void handlePayment(CompletedPaymentNotification payment) {
     if (payment == null) {
       return;
@@ -52,9 +56,7 @@ public class Reel {
     if (payment.amount().getMajor() >= data.requiredAmount().getMajor()) {
       var command = new ReelCommand();
       command.setType("trigger");
-      command.setSelection(
-        data.items().get(random.nextInt(data.items().size()))
-      );
+      command.setSelection(run());
       command.setWidgetId(data.widgetConfigId());
       command.setPaymentId(payment.id());
       command.setRecipientId(payment.recipientId());
