@@ -6,8 +6,6 @@ import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RabbitListener
 public class ReelWidgetConfigChangesListener {
@@ -45,6 +43,11 @@ public class ReelWidgetConfigChangesListener {
     }
     if ("deleted".equals(event.type())) {
       reels.delete(widget.ownerId(), widget.id());
+    }
+    if ("toggled".equals(event.type())) {
+      reels
+        .getBy(widget.ownerId(), widget.id())
+        .ifPresent(reel -> reel.toggle());
     }
   }
 }

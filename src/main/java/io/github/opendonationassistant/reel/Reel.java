@@ -35,7 +35,17 @@ public class Reel {
     this.random = new Random();
   }
 
-  public String run(){
+  public boolean isEnabled() {
+    return data.enabled();
+  }
+
+  public Reel toggle() {
+    final ReelData updatedData = data.withEnabled(!data.enabled());
+    repository.update(updatedData);
+    return new Reel(updatedData, commandSender, repository, widgetSender);
+  }
+
+  public String run() {
     return data.items().get(random.nextInt(data.items().size()));
   }
 
