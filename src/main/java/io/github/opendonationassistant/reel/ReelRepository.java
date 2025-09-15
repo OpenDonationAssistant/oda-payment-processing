@@ -50,7 +50,8 @@ public class ReelRepository {
       new Amount(0, 0, "RUB"),
       new Amount(0, 0, "RUB"),
       List.of(),
-      true
+      true,
+      false
     );
     log.info("Reel created", Map.of("reel", created));
     repository.save(created);

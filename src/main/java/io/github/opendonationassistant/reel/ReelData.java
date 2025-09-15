@@ -1,7 +1,7 @@
 package io.github.opendonationassistant.reel;
 
 import io.github.opendonationassistant.commons.Amount;
-import io.github.opendonationassistant.utils.StringListConverter;
+import io.github.opendonationassistant.commons.StringListConverter;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.MappedProperty;
@@ -18,7 +18,8 @@ public record ReelData(
   Amount requiredAmount,
   Amount stepAmount,
   @MappedProperty(converter = StringListConverter.class) List<String> items,
-  Boolean enabled
+  Boolean enabled,
+  Boolean deleted
 ) {
   public static final String EACH_PAYMENT_CONDITION = "eachpayment";
   public static final String SUM_AMOUNT_CONDITION = "sum";
@@ -33,7 +34,8 @@ public record ReelData(
       requiredAmount,
       stepAmount,
       items,
-      value
+      value,
+      deleted
     );
   }
 
@@ -46,7 +48,8 @@ public record ReelData(
       requiredAmount,
       stepAmount,
       value,
-      enabled
+      enabled,
+      deleted
     );
   }
 
@@ -59,7 +62,8 @@ public record ReelData(
       value,
       stepAmount,
       items,
-      enabled
+      enabled,
+      deleted
     );
   }
 
@@ -72,7 +76,22 @@ public record ReelData(
       requiredAmount,
       value,
       items,
-      enabled
+      enabled,
+      deleted
+    );
+  }
+
+  public ReelData withDeleted(Boolean value) {
+    return new ReelData(
+      id,
+      recipientId,
+      widgetConfigId,
+      accumulatedAmount,
+      requiredAmount,
+      stepAmount,
+      items,
+      enabled,
+      value
     );
   }
 }

@@ -4,8 +4,6 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.MappedProperty;
 import io.micronaut.data.model.DataType;
-import io.micronaut.jackson.ObjectMapperFactory;
-import io.micronaut.serde.ObjectMapper;
 import io.micronaut.serde.annotation.Serdeable;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,6 +21,8 @@ public class DonatonData {
 
   @MappedProperty(type = DataType.JSON)
   private Map<String, BigDecimal> secondsPerDonation;
+
+  private Boolean enabled;
 
   public String getId() {
     return id;
@@ -61,12 +61,14 @@ public class DonatonData {
     this.secondsPerDonation = secondsPerDonation;
   }
 
-  @Override
-  public String toString() {
-    try {
-      return ObjectMapper.getDefault().writeValueAsString(this);
-    } catch (Exception e) {
-      return "Can't serializate DonatonData: " + e.getMessage();
+  public Boolean getEnabled() {
+    if (enabled == null) {
+      return true;
     }
+    return enabled;
+  }
+
+  public void setEnabled(Boolean enabled) {
+    this.enabled = enabled;
   }
 }

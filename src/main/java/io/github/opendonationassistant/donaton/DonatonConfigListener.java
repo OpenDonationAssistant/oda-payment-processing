@@ -43,8 +43,12 @@ public class DonatonConfigListener {
       repository.byId(widget.ownerId(), widget.id()).update(widget.config());
     }
 
-    if (!"deleted".equals(event.type())) {
+    if ("updated".equals(event.type())) {
       repository.byId(widget.ownerId(), widget.id()).update(widget.config());
+    }
+
+    if ("toggled".equals(event.type())) {
+      repository.byId(widget.ownerId(), widget.id()).toggle();
     }
   }
 }

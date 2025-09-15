@@ -37,10 +37,13 @@ public class Donaton {
   }
 
   public void handlePayment(CompletedPaymentNotification notification) {
+    if (!this.data.getEnabled()){
+      return;
+    }
     var currency = notification.amount().getCurrency();
     var rate = data.getSecondsPerDonation().get(currency);
     if (rate == null) {
-      log.info(
+      log.debug(
         "No rate found",
         Map.of("currency", currency, "recipientId", notification.recipientId())
       );
@@ -98,6 +101,15 @@ public class Donaton {
       });
     log.info("Update donaton", Map.of("update", this.data));
     repository.update(this.data);
+  }
+
+  public DonatonData data() {
+    return this.data;
+  }
+
+  public void toggle(){
+    this.data.setEnabled(!this.data.getEnabled());
+    this.repository.update(this.data);
   }
 
   @Override

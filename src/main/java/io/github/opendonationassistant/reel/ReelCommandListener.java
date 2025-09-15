@@ -15,60 +15,69 @@ public class ReelCommandListener {
 
   private final ReelWidgetCommandSender commandSender;
   private final HistoryCommandSender historyCommandSender;
-  private final ReelCommandSender reelCommandSender;
   private final ReelRepository reelRepository;
 
   @Inject
   public ReelCommandListener(
     ReelWidgetCommandSender commandSender,
     HistoryCommandSender historyCommandSender,
-    ReelCommandSender reelCommandSender,
     ReelRepository reelRepository
   ) {
     this.commandSender = commandSender;
     this.historyCommandSender = historyCommandSender;
-    this.reelCommandSender = reelCommandSender;
     this.reelRepository = reelRepository;
   }
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Commands.REEL)
   public void listen(ReelCommand command) {
-    if ("select".equals(command.getType())) {
-      reelRepository
-        .getBy(command.getRecipientId(), command.getWidgetId())
-        .ifPresent(reel -> {
-          command.setSelection(reel.run());
-          command.setType("trigger");
-          commandSender.send("reel", command);
-        });
-    }
-    if ("trigger".equals(command.getType())) {
-      if (
-        StringUtils.isNotEmpty(command.getPaymentId()) &&
-        StringUtils.isNotEmpty(command.getRecipientId())
-      ) {
-        HistoryItemData data = new HistoryItemData(
-          null,
-          command.getPaymentId(),
-          null,
-          null,
-          command.getRecipientId(),
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          List.of(new ReelResult(command.getSelection()))
-        );
-        historyCommandSender.send(
-          "history",
-          new HistoryCommand("update", data, false, false, false, false, false)
-        );
+    switch (command.getType()) {
+      case "select" -> {
+        selectWinner(command);
+        break;
       }
-      commandSender.send("%sreel".formatted(command.getRecipientId()), command);
+      case "trigger" -> {
+        handleWinner(command);
+        break;
+      }
     }
+  }
+
+  private void selectWinner(ReelCommand command) {
+    reelRepository
+      .getBy(command.getRecipientId(), command.getWidgetId())
+      .ifPresent(reel -> {
+        command.setSelection(reel.run());
+        command.setType("trigger");
+        commandSender.send("reel", command);
+      });
+  }
+
+  private void handleWinner(ReelCommand command) {
+    if (
+      StringUtils.isNotEmpty(command.getPaymentId()) &&
+      StringUtils.isNotEmpty(command.getRecipientId())
+    ) {
+      HistoryItemData data = new HistoryItemData(
+        null,
+        command.getPaymentId(),
+        null,
+        null,
+        command.getRecipientId(),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        List.of(new ReelResult(command.getSelection()))
+      );
+      historyCommandSender.send(
+        "history",
+        new HistoryCommand("update", data, false, false, false, false, false)
+      );
+    }
+    commandSender.send("%sreel".formatted(command.getRecipientId()), command);
   }
 }

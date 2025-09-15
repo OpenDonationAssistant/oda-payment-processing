@@ -28,7 +28,8 @@ public class ReelTest {
         new Amount(300, 0, "RUB"),
         new Amount(300, 0, "RUB"),
         List.of("test1"),
-        true
+        true,
+        false
       ),
       commandSender,
       repository,

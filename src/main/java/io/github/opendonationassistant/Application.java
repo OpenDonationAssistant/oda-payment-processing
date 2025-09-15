@@ -29,7 +29,6 @@ public class Application {
       .mainClass(Application.class)
       .banner(false)
       .start();
-    Beans.context = context;
   }
 
   @Singleton
