@@ -53,7 +53,9 @@ public class ReelTest {
       new Amount(500, 0, "RUB"),
       List.of(),
       "goal",
-      Instant.now()
+      Instant.now(),
+      "ODA",
+      List.of()
     );
 
     reel.handlePayment(notification);

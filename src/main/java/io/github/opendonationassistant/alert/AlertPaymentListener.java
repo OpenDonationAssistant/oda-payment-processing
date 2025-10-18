@@ -10,7 +10,6 @@ import io.github.opendonationassistant.events.CompletedPaymentNotification;
 import io.github.opendonationassistant.events.alerts.AlertNotification.AlertMedia;
 import io.github.opendonationassistant.events.alerts.AlertSender;
 import io.micronaut.context.annotation.Value;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
@@ -91,22 +90,6 @@ public class AlertPaymentListener {
   @Queue(ALERTS)
   public void listen(CompletedPaymentNotification payment) {
     log.info("Received notification", Map.of("payment", payment));
-    if (StringUtils.isEmpty(payment.cleanMessage())) {
-      sendUsualNotification(payment);
-      return;
-    }
-    // if ("philipi4".equals(payment.recipientId())) {
-    //   if (payment.amount().getMajor() == 100) {
-    //     sendNotificationWithGeneratedArt(payment);
-    //   } else {
-    //     sendUsualNotification(payment);
-    //   }
-    //   return;
-    // }
-    // if ("batongleba".equals(payment.recipientId())) {
-    //   sendNotificationWithGeneratedArt(payment);
-    //   return;
-    // }
     sendUsualNotification(payment);
   }
 }

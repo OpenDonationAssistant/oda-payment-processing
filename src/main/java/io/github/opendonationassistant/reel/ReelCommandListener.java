@@ -71,7 +71,8 @@ public class ReelCommandListener {
         null,
         null,
         null,
-        List.of(new ReelResult(command.getSelection()))
+        List.of(new ReelResult(command.getSelection())),
+        null
       );
       historyCommandSender.send(
         "history",
