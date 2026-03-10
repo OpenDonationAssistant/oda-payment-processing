@@ -1,4 +1,4 @@
-package io.github.opendonationassistant.reel;
+package io.github.opendonationassistant.reel.listener;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,19 +8,21 @@ import io.github.opendonationassistant.events.widget.Widget;
 import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
 import io.github.opendonationassistant.events.widget.WidgetConfig;
 import io.github.opendonationassistant.events.widget.WidgetProperty;
+import io.github.opendonationassistant.reel.repository.Reel;
+import io.github.opendonationassistant.reel.repository.ReelRepository;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 @MicronautTest(environments = "allinone")
-public class ReelWidgetConfigChangesListenerTest {
+public class ConfigListenerTest {
 
   @Inject
   ReelRepository reels;
 
   @Inject
-  ReelWidgetConfigChangesListener listener;
+  ConfigListener listener;
 
   @Test
   public void testTogglingReel() {
@@ -49,13 +51,16 @@ public class ReelWidgetConfigChangesListenerTest {
       config
     );
     reels.create(widget);
+
     final List<Reel> createdReels = reels.findFor("testuser");
     assertEquals(1, createdReels.size());
-    assertTrue(createdReels.get(0).isEnabled());
+    assertTrue(createdReels.get(0).data().enabled());
+
     var event = new WidgetChangedEvent("toggled", widget);
     listener.listen(event);
+
     final List<Reel> updatedReels = reels.findFor("testuser");
     assertEquals(1, updatedReels.size());
-    assertFalse(updatedReels.get(0).isEnabled());
+    assertFalse(updatedReels.get(0).data().enabled());
   }
 }

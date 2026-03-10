@@ -1,4 +1,4 @@
-package io.github.opendonationassistant.reel;
+package io.github.opendonationassistant.reel.repository;
 
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.StringListConverter;

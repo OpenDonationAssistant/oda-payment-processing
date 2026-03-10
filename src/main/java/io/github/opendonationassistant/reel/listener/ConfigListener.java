@@ -1,14 +1,15 @@
-package io.github.opendonationassistant.reel;
+package io.github.opendonationassistant.reel.listener;
 
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.widget.WidgetChangedEvent;
+import io.github.opendonationassistant.reel.repository.ReelRepository;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
 import java.util.Map;
 
 @RabbitListener
-public class ReelWidgetConfigChangesListener {
+public class ConfigListener {
 
   private static final String WIDGET_TYPE = "reel";
   private final ODALogger log = new ODALogger(this);
@@ -16,7 +17,7 @@ public class ReelWidgetConfigChangesListener {
   private final ReelRepository reels;
 
   @Inject
-  public ReelWidgetConfigChangesListener(ReelRepository reels) {
+  public ConfigListener(ReelRepository reels) {
     this.reels = reels;
   }
 

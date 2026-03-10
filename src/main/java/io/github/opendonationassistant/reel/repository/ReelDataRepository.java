@@ -1,4 +1,4 @@
-package io.github.opendonationassistant.reel;
+package io.github.opendonationassistant.reel.repository;
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

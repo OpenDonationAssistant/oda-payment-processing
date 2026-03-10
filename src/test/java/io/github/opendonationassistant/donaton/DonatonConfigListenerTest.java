@@ -35,6 +35,6 @@ public class DonatonConfigListenerTest {
     var event = new WidgetChangedEvent("toggled", widget);
     listener.listen(event);
     final Donaton donaton = repository.byId("testuser", "id");
-    assertFalse(donaton.data().getEnabled());
+    assertFalse(donaton.data().enabled());
   }
 }

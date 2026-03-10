@@ -1,15 +1,16 @@
 package io.github.opendonationassistant.donaton;
 
-import io.github.opendonationassistant.commons.ToString;
+import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.donaton.repository.DonatonData;
 import io.github.opendonationassistant.donaton.repository.DonatonDataRepository;
-import io.github.opendonationassistant.events.CompletedPaymentNotification;
+import io.github.opendonationassistant.donaton.repository.DonatonLink;
+import io.github.opendonationassistant.donaton.repository.DonatonLinkRepository;
+import io.github.opendonationassistant.events.payments.PaymentEvent;
 import io.github.opendonationassistant.events.widget.WidgetCommandSender;
 import io.github.opendonationassistant.events.widget.WidgetConfig;
 import io.github.opendonationassistant.events.widget.WidgetProperty;
 import io.github.opendonationassistant.events.widget.WidgetUpdateCommand;
-import io.micronaut.serde.annotation.Serdeable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -17,45 +18,55 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-@Serdeable
 public class Donaton {
 
   private final ODALogger log = new ODALogger(this);
   private DonatonData data;
   private DonatonDataRepository repository;
+  private DonatonLinkRepository linkRepository;
   private WidgetCommandSender commandSender;
   private DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
 
   public Donaton(
     DonatonData data,
     DonatonDataRepository repository,
+    DonatonLinkRepository linkRepository,
     WidgetCommandSender commandSender
   ) {
     this.data = data;
     this.repository = repository;
+    this.linkRepository = linkRepository;
     this.commandSender = commandSender;
   }
 
-  public void handlePayment(CompletedPaymentNotification notification) {
-    if (!this.data.getEnabled()){
+  public void handlePayment(PaymentEvent payment) {
+    if (!this.data.enabled()) {
       return;
     }
-    var currency = notification.amount().getCurrency();
-    var rate = data.getSecondsPerDonation().get(currency);
+    var currency = payment.amount().getCurrency();
+    var rate = data.secondsPerDonation().get(currency);
     if (rate == null) {
       log.debug(
         "No rate found",
-        Map.of("currency", currency, "recipientId", notification.recipientId())
+        Map.of("currency", currency, "recipientId", payment.recipientId())
       );
       return;
     }
-    var amount = notification.amount().getMajor();
-    var endDate = data.getEndDate();
+    var amount = payment.amount().getMajor();
+    var endDate = data.endDate();
     var newEndDate = endDate.plusSeconds(
       rate.multiply(BigDecimal.valueOf(amount)).longValue()
     );
-    data.setEndDate(newEndDate);
+    data = data.withEndDate(newEndDate);
     repository.update(data);
+    linkRepository.save(
+      new DonatonLink(
+        Generators.timeBasedEpochGenerator().generate().toString(),
+        data.id(),
+        payment.id(),
+        "payment"
+      )
+    );
     var timerEnd = new WidgetProperty(
       "timer-end",
       "timer-end",
@@ -63,7 +74,7 @@ public class Donaton {
       Map.of("timestamp", formatter.format(newEndDate))
     );
     var patch = new WidgetConfig(List.of(timerEnd));
-    WidgetUpdateCommand command = new WidgetUpdateCommand(data.getId(), patch);
+    WidgetUpdateCommand command = new WidgetUpdateCommand(data.id(), patch);
     commandSender.send(command);
   }
 
@@ -72,30 +83,55 @@ public class Donaton {
       .properties()
       .stream()
       .forEach(property -> {
+        var value = property.value();
+        if (value == null) {
+          return;
+        }
         if ("timer-end".equals(property.name())) {
           String timestamp =
-            ((Map<String, String>) property.value()).get("timestamp");
-          this.data.setEndDate(Instant.from(formatter.parse(timestamp)));
+            ((Map<String, String>) value).get("timestamp");
+          this.data = this.data.withEndDate(
+              Instant.from(formatter.parse(timestamp))
+            );
         }
         if ("price".equals(property.name())) {
-          var price = (Map<String, Object>) property.value();
+          var price = (Map<String, Object>) value;
           String unit = (String) price.get("unit");
           Integer amount = (Integer) price.get("price");
+          if (amount == null){
+            return;
+          }
           if ("10MIN".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 10).divide( BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
-            this.data.setSecondsPerDonation(Map.of("RUB", rate));
+            var rate = BigDecimal.valueOf(60 * 10).divide(
+              BigDecimal.valueOf(amount),
+              5,
+              RoundingMode.HALF_UP
+            );
+            this.data = this.data.withSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("MIN".equals(unit)) {
-            var rate = BigDecimal.valueOf(60).divide(BigDecimal.valueOf(amount), 5 , RoundingMode.HALF_UP);
-            this.data.setSecondsPerDonation(Map.of("RUB", rate));
+            var rate = BigDecimal.valueOf(60).divide(
+              BigDecimal.valueOf(amount),
+              5,
+              RoundingMode.HALF_UP
+            );
+            this.data = this.data.withSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("HOUR".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 60).divide(BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
-            this.data.setSecondsPerDonation(Map.of("RUB", rate));
+            var rate = BigDecimal.valueOf(60 * 60).divide(
+              BigDecimal.valueOf(amount),
+              5,
+              RoundingMode.HALF_UP
+            );
+            this.data = this.data.withSecondsPerDonation(Map.of("RUB", rate));
           }
           if ("DAY".equals(unit)) {
-            var rate = BigDecimal.valueOf(60 * 60 * 24).divide(BigDecimal.valueOf(amount), 5, RoundingMode.HALF_UP);
-            this.data.setSecondsPerDonation(Map.of("RUB", rate));
+            var rate = BigDecimal.valueOf(60 * 60 * 24).divide(
+              BigDecimal.valueOf(amount),
+              5,
+              RoundingMode.HALF_UP
+            );
+            this.data = this.data.withSecondsPerDonation(Map.of("RUB", rate));
           }
         }
       });
@@ -107,13 +143,8 @@ public class Donaton {
     return this.data;
   }
 
-  public void toggle(){
-    this.data.setEnabled(!this.data.getEnabled());
+  public void toggle() {
+    this.data = this.data.withEnabled(!this.data.enabled());
     this.repository.update(this.data);
-  }
-
-  @Override
-  public String toString() {
-    return ToString.asJson(this);
   }
 }
