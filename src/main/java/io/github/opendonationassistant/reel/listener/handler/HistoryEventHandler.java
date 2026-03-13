@@ -1,8 +1,9 @@
 package io.github.opendonationassistant.reel.listener.handler;
 
-import io.github.opendonationassistant.events.MessageHandler;
+import io.github.opendonationassistant.events.AbstractMessageHandler;
 import io.github.opendonationassistant.events.history.event.HistoryItemEvent;
 import io.github.opendonationassistant.events.reel.ReelCommand.TriggerReelCommand;
+import io.github.opendonationassistant.events.reel.ReelFacade;
 import io.github.opendonationassistant.reel.repository.ReelLinkRepository;
 import io.github.opendonationassistant.reel.repository.ReelRepository;
 import io.micronaut.serde.ObjectMapper;
@@ -12,40 +13,42 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Singleton
-public class HistoryEventHandler implements MessageHandler {
+public class HistoryEventHandler
+  extends AbstractMessageHandler<HistoryItemEvent> {
 
-  private final ObjectMapper objectMapper;
   private final ReelLinkRepository reelLinkRepository;
   private final ReelRepository reelRepository;
+  private final ReelFacade reelFacade;
 
   @Inject
   public HistoryEventHandler(
     ObjectMapper objectMapper,
     ReelLinkRepository reelLinkRepository,
-    ReelRepository reelRepository
+    ReelRepository reelRepository,
+    ReelFacade reelFacade
   ) {
-    this.objectMapper = objectMapper;
+    super(objectMapper);
     this.reelLinkRepository = reelLinkRepository;
     this.reelRepository = reelRepository;
+    this.reelFacade = reelFacade;
   }
 
   @Override
-  public void handle(byte[] message) throws IOException {
-    var event = objectMapper.readValue(message, HistoryItemEvent.class);
-    Optional.ofNullable(event)
-      .map(HistoryItemEvent::originId)
+  public void handle(HistoryItemEvent event) throws IOException {
+    Optional.ofNullable(event.originId())
       .flatMap(reelLinkRepository::findByOriginId)
       .flatMap(link -> reelRepository.getById(link.reelId()))
       .ifPresent(reel ->
-        new TriggerReelCommand(
-          reel.data().widgetConfigId(),
-          reel.data().recipientId()
-        )
+        reelFacade
+          .sendCommand(
+            new TriggerReelCommand(
+              reel.data().widgetConfigId(),
+              reel.data().recipientId(),
+              "payment",
+              event.originId()
+            )
+          )
+          .join()
       );
-  }
-
-  @Override
-  public String type() {
-    return "HistoryItemEvent";
   }
 }

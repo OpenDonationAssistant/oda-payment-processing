@@ -10,17 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RabbitListener
-public class DonatonConfigListener {
+public class ConfigListener {
 
   private static final String WIDGET_TYPE = "donaton";
 
-  private final Logger log = LoggerFactory.getLogger(
-    DonatonConfigListener.class
-  );
+  private final Logger log = LoggerFactory.getLogger(ConfigListener.class);
   private final DonatonRepository repository;
 
   @Inject
-  public DonatonConfigListener(DonatonRepository repository) {
+  public ConfigListener(DonatonRepository repository) {
     this.repository = repository;
   }
 

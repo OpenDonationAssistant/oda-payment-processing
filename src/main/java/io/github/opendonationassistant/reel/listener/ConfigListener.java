@@ -7,6 +7,7 @@ import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import jakarta.inject.Inject;
 import java.util.Map;
+import java.util.Optional;
 
 @RabbitListener
 public class ConfigListener {
@@ -24,31 +25,30 @@ public class ConfigListener {
   @Queue("config.reel")
   public void listen(WidgetChangedEvent event) {
     log.debug("Received widget configuration", Map.of("event", event));
-    if (event == null) {
-      return;
-    }
-    var widget = event.widget();
-    if (widget == null) {
-      return;
-    }
-    if (!WIDGET_TYPE.equals(widget.type())) {
-      return;
-    }
-    if ("created".equals(event.type())) {
-      reels.create(widget);
-    }
-    if ("updated".equals(event.type())) {
-      reels
-        .getBy(widget.ownerId(), widget.id())
-        .ifPresent(reel -> reel.update(widget));
-    }
-    if ("deleted".equals(event.type())) {
-      reels.delete(widget.ownerId(), widget.id());
-    }
-    if ("toggled".equals(event.type())) {
-      reels
-        .getBy(widget.ownerId(), widget.id())
-        .ifPresent(reel -> reel.toggle());
-    }
+    Optional.ofNullable(event)
+      .map(WidgetChangedEvent::widget)
+      .filter(widget -> WIDGET_TYPE.equals(widget.type()))
+      .ifPresent(widget -> {
+        switch (event.type()) {
+          case "created":
+            reels.create(widget);
+            break;
+          case "updated":
+            reels
+              .getBy(widget.ownerId(), widget.id())
+              .ifPresent(reel -> reel.update(widget));
+            break;
+          case "deleted":
+            reels.delete(widget.ownerId(), widget.id());
+            break;
+          case "toggled":
+            reels
+              .getBy(widget.ownerId(), widget.id())
+              .ifPresent(reel -> reel.toggle());
+            break;
+          default:
+            return;
+        }
+      });
   }
 }

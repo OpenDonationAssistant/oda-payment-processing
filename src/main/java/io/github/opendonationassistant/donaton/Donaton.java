@@ -40,7 +40,7 @@ public class Donaton {
   }
 
   public void handlePayment(PaymentEvent payment) {
-    if (!this.data.enabled()) {
+    if (!data.enabled()) {
       return;
     }
     var currency = payment.amount().getCurrency();
@@ -54,9 +54,8 @@ public class Donaton {
     }
     var amount = payment.amount().getMajor();
     var endDate = data.endDate();
-    var newEndDate = endDate.plusSeconds(
-      rate.multiply(BigDecimal.valueOf(amount)).longValue()
-    );
+    var change = rate.multiply(BigDecimal.valueOf(amount)).longValue();
+    var newEndDate = endDate.plusSeconds(change);
     data = data.withEndDate(newEndDate);
     repository.update(data);
     linkRepository.save(
@@ -64,7 +63,9 @@ public class Donaton {
         Generators.timeBasedEpochGenerator().generate().toString(),
         data.id(),
         payment.id(),
-        "payment"
+        "payment",
+        endDate,
+        newEndDate
       )
     );
     var timerEnd = new WidgetProperty(
@@ -88,8 +89,7 @@ public class Donaton {
           return;
         }
         if ("timer-end".equals(property.name())) {
-          String timestamp =
-            ((Map<String, String>) value).get("timestamp");
+          String timestamp = ((Map<String, String>) value).get("timestamp");
           this.data = this.data.withEndDate(
               Instant.from(formatter.parse(timestamp))
             );
@@ -98,7 +98,7 @@ public class Donaton {
           var price = (Map<String, Object>) value;
           String unit = (String) price.get("unit");
           Integer amount = (Integer) price.get("price");
-          if (amount == null){
+          if (amount == null) {
             return;
           }
           if ("10MIN".equals(unit)) {

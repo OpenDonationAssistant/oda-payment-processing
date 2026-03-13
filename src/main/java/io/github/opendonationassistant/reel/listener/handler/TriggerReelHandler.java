@@ -1,6 +1,6 @@
 package io.github.opendonationassistant.reel.listener.handler;
 
-import io.github.opendonationassistant.events.MessageHandler;
+import io.github.opendonationassistant.events.AbstractMessageHandler;
 import io.github.opendonationassistant.events.reel.ReelCommand.TriggerReelCommand;
 import io.github.opendonationassistant.reel.repository.Reel;
 import io.github.opendonationassistant.reel.repository.ReelRepository;
@@ -11,27 +11,21 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Singleton
-public class TriggerReelHandler implements MessageHandler {
+public class TriggerReelHandler
+  extends AbstractMessageHandler<TriggerReelCommand> {
 
-  private final ObjectMapper mapper;
   private final ReelRepository repository;
 
   @Inject
   public TriggerReelHandler(ObjectMapper mapper, ReelRepository repository) {
-    this.mapper = mapper;
+    super(mapper);
     this.repository = repository;
   }
 
   @Override
-  public void handle(byte[] message) throws IOException {
-    var event = mapper.readValue(message, TriggerReelCommand.class);
+  public void handle(TriggerReelCommand event) throws IOException {
     Optional.ofNullable(event)
       .flatMap(it -> repository.getBy(it.recipientId(), it.widgetId()))
-      .ifPresent(Reel::run);
-  }
-
-  @Override
-  public String type() {
-    return "TriggerReelCommand";
+      .ifPresent(reel -> reel.run(event.source(), event.originId()));
   }
 }

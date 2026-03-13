@@ -1,4 +1,4 @@
-package io.github.opendonationassistant.reel.listener;
+package io.github.opendonationassistant.donaton;
 
 import io.github.opendonationassistant.events.MessageProcessor;
 import io.micronaut.messaging.annotation.MessageHeader;
@@ -10,19 +10,19 @@ import jakarta.inject.Inject;
 @RabbitListener
 public class EventsListener {
 
-  private MessageProcessor processor;
+  private final MessageProcessor processor;
 
   @Inject
   public EventsListener(MessageProcessor processor) {
     this.processor = processor;
   }
 
-  @Queue(io.github.opendonationassistant.rabbit.Queue.Reel.EVENTS)
+  @Queue(io.github.opendonationassistant.rabbit.Queue.Donaton.EVENTS)
   public void listen(
     @MessageHeader String type,
-    byte[] payment,
+    byte[] event,
     RabbitAcknowledgement ack
   ) {
-    processor.process(type, payment, ack);
+    processor.process(type, event, ack);
   }
 }

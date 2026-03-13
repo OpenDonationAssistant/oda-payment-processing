@@ -2,7 +2,6 @@ package io.github.opendonationassistant;
 
 import io.github.opendonationassistant.rabbit.RabbitConfiguration;
 import io.github.opendonationassistant.rabbit.RabbitExceptionHandler;
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;
 import io.micronaut.context.annotation.ContextConfigurer;
@@ -25,10 +24,7 @@ public class Application {
   }
 
   public static void main(String[] args) {
-    ApplicationContext context = Micronaut.build(args)
-      .mainClass(Application.class)
-      .banner(false)
-      .start();
+    Micronaut.build(args).mainClass(Application.class).banner(false).start();
   }
 
   @Singleton

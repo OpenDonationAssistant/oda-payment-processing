@@ -41,22 +41,26 @@ public class ReelRepository {
       });
   }
 
+  public Reel create(ReelData data) {
+    log.info("Reel created", Map.of("reel", data));
+    // TODO use repository create
+    repository.save(data);
+    return from(data);
+  }
+
   public Reel create(Widget widget) {
     var created = new ReelData(
       Generators.timeBasedEpochGenerator().generate().toString(),
       widget.ownerId(),
       widget.id(),
       new Amount(0, 0, "RUB"),
-      new Amount(0, 0, "RUB"),
+      new Amount(100, 0, "RUB"),
       new Amount(0, 0, "RUB"),
       List.of(),
       true,
       false
     );
-    log.info("Reel created", Map.of("reel", created));
-    // TODO use repository create
-    repository.save(created);
-    return from(created).update(widget);
+    return create(created).update(widget);
   }
 
   public List<Reel> findFor(String recipientId) {

@@ -18,7 +18,7 @@ public class DonatonConfigListenerTest {
   private DonatonRepository repository;
 
   @Inject
-  private DonatonConfigListener listener;
+  private ConfigListener listener;
 
   @Test
   public void testTogglingDonaton() {

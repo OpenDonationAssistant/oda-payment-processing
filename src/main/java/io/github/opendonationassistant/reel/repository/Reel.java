@@ -3,6 +3,7 @@ package io.github.opendonationassistant.reel.repository;
 import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
+import io.github.opendonationassistant.events.history.event.ReelResultHistoryEvent;
 import io.github.opendonationassistant.events.payments.PaymentEvent;
 import io.github.opendonationassistant.events.reel.ReelFacade;
 import io.github.opendonationassistant.events.widget.Widget;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import org.jspecify.annotations.Nullable;
 
 public class Reel {
 
@@ -41,8 +43,18 @@ public class Reel {
     return new Reel(updatedData, facade, repository, linkRepository);
   }
 
-  public void run() {
-    var selection = data.items().get(random.nextInt(data.items().size()));
+  public void run(@Nullable String source, @Nullable String originId) {
+    var index = random.nextInt(data.items().size());
+    var selection = data.items().get(index);
+    facade.sendEvent(
+      new ReelResultHistoryEvent(
+        source,
+        originId,
+        data.widgetConfigId(),
+        String.valueOf(index), // TODO send reel item id not index
+        selection
+      )
+    );
   }
 
   public void handlePayment(PaymentEvent payment) {

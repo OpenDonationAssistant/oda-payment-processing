@@ -6,7 +6,6 @@ import io.micronaut.data.annotation.MappedProperty;
 import io.micronaut.data.model.DataType;
 import io.micronaut.serde.annotation.Serdeable;
 import io.micronaut.sourcegen.annotations.Wither;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Map;
@@ -21,8 +20,5 @@ public record DonatonData(
   @MappedProperty(type = DataType.JSON)
   Map<String, BigDecimal> secondsPerDonation,
   Boolean enabled
-) implements DonatonDataWither {
-  public Map<String, BigDecimal> secondsPerDonation() {
-    return secondsPerDonation == null ? Map.of() : secondsPerDonation;
-  }
-}
+)
+  implements DonatonDataWither {}

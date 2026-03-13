@@ -12,7 +12,6 @@ import io.micronaut.http.client.annotation.Client;
 @Client(id = "artmodel")
 @Header(name = CONTENT_TYPE, value = "application/json")
 public interface ArtClient {
-
   @Post("/foundationModels/v1/imageGenerationAsync")
   public OperationDescription generate(
     @Header(name = "Authorization") String Authorization,
@@ -24,5 +23,4 @@ public interface ArtClient {
     @Header(name = "Authorization") String Authorization,
     @PathVariable String id
   );
-
 }

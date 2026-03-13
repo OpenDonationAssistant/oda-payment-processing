@@ -15,6 +15,7 @@
 
   <properties>
     <packaging>jar</packaging>
+    <oda.version>0.10.167</oda.version>
     <jdk.version>25</jdk.version>
     <release.version>25</release.version>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
@@ -31,7 +32,12 @@
     <dependency>
       <groupId>io.github.opendonationassistant</groupId>
       <artifactId>oda-rabbit-conf</artifactId>
-      <version>0.10.160</version>
+      <version>${oda.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.opendonationassistant</groupId>
+      <artifactId>oda-commons</artifactId>
+      <version>${oda.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jspecify</groupId>
