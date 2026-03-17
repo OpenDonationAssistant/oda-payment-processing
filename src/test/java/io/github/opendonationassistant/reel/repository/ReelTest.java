@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import io.github.opendonationassistant.commons.Amount;
+import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.payments.PaymentEvent;
 import io.github.opendonationassistant.events.reel.ReelFacade;
 import io.github.opendonationassistant.events.widget.WidgetCommandSender;
@@ -16,22 +17,26 @@ import org.junit.jupiter.api.Test;
 
 public class ReelTest {
 
+  private ODALogger log = new ODALogger(this);
+
   ReelFacade facade = mock(ReelFacade.class);
   ReelDataRepository repository = mock(ReelDataRepository.class);
   WidgetCommandSender configSender = mock(WidgetCommandSender.class);
   ReelLinkRepository linkRepository = mock(ReelLinkRepository.class);
 
-  ReelData reelData = new ReelData(
-    "reelId",
-    "testuser",
-    "widgetId",
-    new Amount(0, 0, "RUB"),
-    new Amount(300, 0, "RUB"),
-    new Amount(0, 0, "RUB"),
-    List.of("item1"),
-    true,
-    false
-  );
+  private ReelData createReelData() {
+    return new ReelData(
+      "reelId",
+      "testuser",
+      "widgetId",
+      new Amount(0, 0, "RUB"),
+      new Amount(300, 0, "RUB"),
+      new Amount(0, 0, "RUB"),
+      List.of("item1"),
+      true,
+      false
+    );
+  }
 
   private final PaymentEvent testEvent = Instancio.of(PaymentEvent.class)
     .set(field(PaymentEvent::recipientId), "testuser")
@@ -40,9 +45,10 @@ public class ReelTest {
 
   @Test
   public void testSendingCommandWhenTriggerForEachPayment() {
-    var reel = new Reel(reelData, facade, repository, linkRepository);
+    var reel = new Reel(createReelData(), facade, repository, linkRepository);
 
     reel.handlePayment(testEvent);
+
     verify(linkRepository).save(
       argThat(link -> {
         return (
@@ -56,15 +62,15 @@ public class ReelTest {
 
   @Test
   public void testSavingCorrectStateToDBWhenToggling() {
-    var reel = new Reel(reelData, facade, repository, linkRepository);
+    var reel = new Reel(createReelData(), facade, repository, linkRepository);
     reel.toggle();
-    verify(repository).update(reelData.withEnabled(false));
+    verify(repository).update(createReelData().withEnabled(false));
   }
 
   @Test
   public void testDisabledReelDontSendTriggerCommand() {
     var reel = new Reel(
-      reelData.withEnabled(false),
+      createReelData().withEnabled(false),
       facade,
       repository,
       linkRepository
@@ -75,3 +81,4 @@ public class ReelTest {
     verify(linkRepository, org.mockito.Mockito.never()).save(any());
   }
 }
+

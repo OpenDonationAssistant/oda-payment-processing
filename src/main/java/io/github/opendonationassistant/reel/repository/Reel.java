@@ -38,7 +38,7 @@ public class Reel {
   }
 
   public Reel toggle() {
-    final ReelData updatedData = data.withEnabled(!data.enabled());
+    final ReelData updatedData = this.data.withEnabled(!this.data.enabled());
     repository.update(updatedData);
     return new Reel(updatedData, facade, repository, linkRepository);
   }
