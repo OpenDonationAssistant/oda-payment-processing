@@ -27,7 +27,7 @@ docker run -d \
   -e JDBC_URL=jdbc:postgresql://postgres:5432/postgres?currentSchema=processing \
   -e JDBC_USER=postgres \
   -e JDBC_PASSWORD=your-password \
-  ghcr.io/opendonationassistant/payment-processing:latest
+  ghcr.io/opendonationassistant/oda-payment-processing:latest
 ```
 
 ### Docker Compose Example
@@ -36,7 +36,7 @@ docker run -d \
 version: "3.8"
 services:
   payment-processing:
-    image: ghcr.io/opendonationassistant/payment-processing:latest
+    image: ghcr.io/opendonationassistant/oda-payment-processing:latest
     environment:
       RABBITMQ_HOST: rabbitmq
       JDBC_URL: jdbc:postgresql://postgres:5432/postgres?currentSchema=processing
