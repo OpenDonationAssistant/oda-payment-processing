@@ -15,7 +15,7 @@
 
   <properties>
     <packaging>jar</packaging>
-    <oda.version>0.10.167</oda.version>
+    <oda.version>0.10.172</oda.version>
     <jdk.version>25</jdk.version>
     <release.version>25</release.version>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
