@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
+import io.github.opendonationassistant.events.history.HistoryFacade;
 import io.github.opendonationassistant.events.payments.PaymentEvent;
 import io.github.opendonationassistant.events.reel.ReelFacade;
 import io.github.opendonationassistant.events.widget.WidgetCommandSender;
@@ -19,7 +20,7 @@ public class ReelTest {
 
   private ODALogger log = new ODALogger(this);
 
-  ReelFacade facade = mock(ReelFacade.class);
+  HistoryFacade facade = mock(HistoryFacade.class);
   ReelDataRepository repository = mock(ReelDataRepository.class);
   WidgetCommandSender configSender = mock(WidgetCommandSender.class);
   ReelLinkRepository linkRepository = mock(ReelLinkRepository.class);

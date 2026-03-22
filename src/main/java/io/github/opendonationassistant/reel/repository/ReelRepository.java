@@ -3,7 +3,7 @@ package io.github.opendonationassistant.reel.repository;
 import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
-import io.github.opendonationassistant.events.reel.ReelFacade;
+import io.github.opendonationassistant.events.history.HistoryFacade;
 import io.github.opendonationassistant.events.widget.Widget;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -14,13 +14,13 @@ public class ReelRepository {
 
   private final ODALogger log = new ODALogger(this);
   private final ReelDataRepository repository;
-  private final ReelFacade facade;
+  private final HistoryFacade facade;
   private final ReelLinkRepository linkRepository;
 
   @Inject
   public ReelRepository(
     ReelDataRepository repository,
-    ReelFacade facade,
+    HistoryFacade facade,
     ReelLinkRepository reelLinkRepository
   ) {
     this.repository = repository;

@@ -5,7 +5,7 @@ import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.events.history.event.ReelResultHistoryEvent;
 import io.github.opendonationassistant.events.payments.PaymentEvent;
-import io.github.opendonationassistant.events.reel.ReelFacade;
+import io.github.opendonationassistant.events.history.HistoryFacade;
 import io.github.opendonationassistant.events.widget.Widget;
 import java.security.SecureRandom;
 import java.util.List;
@@ -19,14 +19,14 @@ public class Reel {
   private ODALogger log = new ODALogger(this);
 
   private final ReelData data;
-  private final ReelFacade facade;
+  private final HistoryFacade facade;
   private final ReelDataRepository repository;
   private final ReelLinkRepository linkRepository;
   private final Random random;
 
   public Reel(
     ReelData data,
-    ReelFacade facade,
+    HistoryFacade facade,
     ReelDataRepository repository,
     ReelLinkRepository linkRepository
   ) {
