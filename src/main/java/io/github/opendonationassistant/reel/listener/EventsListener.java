@@ -1,11 +1,15 @@
 package io.github.opendonationassistant.reel.listener;
 
 import io.github.opendonationassistant.events.MessageProcessor;
+import io.github.opendonationassistant.reel.listener.handler.HistoryEventHandler;
+import io.github.opendonationassistant.reel.listener.handler.PaymentEventHandler;
+import io.github.opendonationassistant.reel.listener.handler.TriggerReelHandler;
 import io.micronaut.messaging.annotation.MessageHeader;
 import io.micronaut.rabbitmq.annotation.Queue;
 import io.micronaut.rabbitmq.annotation.RabbitListener;
 import io.micronaut.rabbitmq.bind.RabbitAcknowledgement;
 import jakarta.inject.Inject;
+import java.util.List;
 
 @RabbitListener
 public class EventsListener {
@@ -13,8 +17,14 @@ public class EventsListener {
   private MessageProcessor processor;
 
   @Inject
-  public EventsListener(MessageProcessor processor) {
-    this.processor = processor;
+  public EventsListener(
+    HistoryEventHandler historyHandler,
+    PaymentEventHandler paymentHandler,
+    TriggerReelHandler triggerHandler
+  ) {
+    this.processor = new MessageProcessor(
+      List.of(historyHandler, paymentHandler, triggerHandler)
+    );
   }
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Reel.EVENTS)
