@@ -3,11 +3,11 @@ package io.github.opendonationassistant.reel.listener;
 import io.github.opendonationassistant.events.MessageProcessor;
 import io.micronaut.messaging.annotation.MessageHeader;
 import io.micronaut.rabbitmq.annotation.Queue;
+import io.micronaut.rabbitmq.annotation.RabbitListener;
 import io.micronaut.rabbitmq.bind.RabbitAcknowledgement;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
+@RabbitListener
 public class CommandListener {
 
   private MessageProcessor processor;
@@ -16,7 +16,6 @@ public class CommandListener {
   public CommandListener(MessageProcessor processor) {
     this.processor = processor;
   }
-
 
   @Queue(io.github.opendonationassistant.rabbit.Queue.Reel.COMMAND)
   public void listen(
