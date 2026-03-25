@@ -56,7 +56,7 @@ public class ConfigListenerTest {
     assertEquals(1, createdReels.size());
     assertTrue(createdReels.get(0).data().enabled());
 
-    var event = new WidgetChangedEvent("toggled", widget);
+    var event = new WidgetChangedEvent("toggled", widget, "manual", null);
     listener.listen(event);
 
     final List<Reel> updatedReels = reels.findFor("testuser");

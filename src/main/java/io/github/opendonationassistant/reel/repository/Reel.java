@@ -50,6 +50,7 @@ public class Reel {
       new ReelResultHistoryEvent(
         source,
         originId,
+        data.recipientId(),
         data.widgetConfigId(),
         String.valueOf(index), // TODO send reel item id not index
         selection

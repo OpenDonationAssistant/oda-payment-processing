@@ -32,7 +32,12 @@ public class DonatonConfigListenerTest {
       "testuser",
       config
     );
-    var event = new WidgetChangedEvent("toggled", widget);
+    var event = new WidgetChangedEvent(
+      "toggled",
+      widget,
+      "manual",
+      null
+    );
     listener.listen(event);
     final Donaton donaton = repository.byId("testuser", "id");
     assertFalse(donaton.data().enabled());
