@@ -2,7 +2,6 @@ package io.github.opendonationassistant.reel.listener.handler;
 
 import io.github.opendonationassistant.events.AbstractMessageHandler;
 import io.github.opendonationassistant.events.reel.ReelCommand.TriggerReelCommand;
-import io.github.opendonationassistant.reel.repository.Reel;
 import io.github.opendonationassistant.reel.repository.ReelRepository;
 import io.micronaut.serde.ObjectMapper;
 import jakarta.inject.Inject;

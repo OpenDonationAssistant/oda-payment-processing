@@ -17,7 +17,7 @@ public class CommandListener {
     this.processor = processor;
   }
 
-  @Queue(io.github.opendonationassistant.rabbit.Queue.Reel.COMMAND)
+  @Queue("reel.command")
   public void listen(
     @MessageHeader String type,
     byte[] payment,
@@ -25,5 +25,4 @@ public class CommandListener {
   ) {
     processor.process(type, payment, ack);
   }
-  
 }
