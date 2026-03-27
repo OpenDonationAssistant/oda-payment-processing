@@ -27,7 +27,7 @@ public class EventsListener {
     );
   }
 
-  @Queue(io.github.opendonationassistant.rabbit.Queue.Reel.EVENTS)
+  @Queue("reel.events")
   public void listen(
     @MessageHeader String type,
     byte[] payment,

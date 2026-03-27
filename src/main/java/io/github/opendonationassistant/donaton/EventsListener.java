@@ -25,7 +25,7 @@ public class EventsListener {
     );
   }
 
-  @Queue(io.github.opendonationassistant.rabbit.Queue.Donaton.EVENTS)
+  @Queue("donaton.events")
   public void listen(
     @MessageHeader String type,
     byte[] event,
