@@ -1,5 +1,6 @@
 package io.github.opendonationassistant.donaton;
 
+import io.github.opendonationassistant.donaton.handlers.ChangeDonatonCommandHandler;
 import io.github.opendonationassistant.donaton.handlers.HistoryItemEventHandler;
 import io.github.opendonationassistant.donaton.handlers.PaymentEventHandler;
 import io.github.opendonationassistant.events.MessageProcessor;
@@ -18,10 +19,11 @@ public class EventsListener {
   @Inject
   public EventsListener(
     PaymentEventHandler paymentHandler,
-    HistoryItemEventHandler historyHandler
+    HistoryItemEventHandler historyHandler,
+    ChangeDonatonCommandHandler changeDonatonCommandHandler
   ) {
     this.processor = new MessageProcessor(
-      List.of(paymentHandler, historyHandler)
+      List.of(paymentHandler, historyHandler, changeDonatonCommandHandler)
     );
   }
 

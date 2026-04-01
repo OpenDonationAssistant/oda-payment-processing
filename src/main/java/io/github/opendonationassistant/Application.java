@@ -1,6 +1,8 @@
 package io.github.opendonationassistant;
 
-import io.github.opendonationassistant.rabbit.RabbitConfiguration;
+import io.github.opendonationassistant.rabbit.AMQPConfiguration;
+import io.github.opendonationassistant.rabbit.Exchange;
+import io.github.opendonationassistant.rabbit.Queue;
 import io.github.opendonationassistant.rabbit.RabbitExceptionHandler;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;
@@ -10,6 +12,8 @@ import io.micronaut.rabbitmq.connect.ChannelInitializer;
 import io.micronaut.rabbitmq.exception.DefaultRabbitListenerExceptionHandler;
 import io.micronaut.runtime.Micronaut;
 import jakarta.inject.Singleton;
+import java.util.List;
+import java.util.Map;
 
 public class Application {
 
@@ -29,7 +33,34 @@ public class Application {
 
   @Singleton
   public ChannelInitializer rabbitConfiguration() {
-    return new RabbitConfiguration();
+    var reelEvents = new Queue("reel.events");
+    var donatonEvents = new Queue("donaton.events");
+    return new AMQPConfiguration(
+      List.of(
+        Exchange.Exchange(
+          "changes.widgets",
+          Map.of("reel", new Queue("config.reel"))
+        ),
+        Exchange.Exchange("reel", Map.of("command", new Queue("reel.command"))),
+        Exchange.Exchange(
+          "history",
+          Map.of("event.HistoryItemEvent", reelEvents)
+        ),
+        Exchange.Exchange("payments", Map.of("event.PaymentEvent", reelEvents)),
+        Exchange.Exchange(
+          "changes.widgets",
+          Map.of("donaton", new Queue("config.donaton"))
+        ),
+        Exchange.Exchange(
+          "history",
+          Map.of("event.HistoryItemEvent", donatonEvents)
+        ),
+        Exchange.Exchange(
+          "payments",
+          Map.of("event.PaymentEvent", donatonEvents)
+        )
+      )
+    );
   }
 
   @Replaces(DefaultRabbitListenerExceptionHandler.class)

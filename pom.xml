@@ -10,12 +10,12 @@
   <parent>
     <groupId>io.micronaut.platform</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>4.10.10</version>
+    <version>4.10.11</version>
   </parent>
 
   <properties>
     <packaging>jar</packaging>
-    <oda.version>0.10.184</oda.version>
+    <oda.version>0.10.202</oda.version>
     <jdk.version>25</jdk.version>
     <release.version>25</release.version>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>

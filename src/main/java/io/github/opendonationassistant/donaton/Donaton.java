@@ -1,6 +1,7 @@
 package io.github.opendonationassistant.donaton;
 
 import com.fasterxml.uuid.Generators;
+import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
 import io.github.opendonationassistant.donaton.repository.DonatonData;
 import io.github.opendonationassistant.donaton.repository.DonatonDataRepository;
@@ -39,20 +40,20 @@ public class Donaton {
     this.commandSender = commandSender;
   }
 
-  public void handlePayment(PaymentEvent payment) {
+  public void handleChange(Amount addition, String originId) {
     if (!data.enabled()) {
       return;
     }
-    var currency = payment.amount().getCurrency();
+    var currency = addition.getCurrency();
     var rate = data.secondsPerDonation().get(currency);
     if (rate == null) {
       log.debug(
         "No rate found",
-        Map.of("currency", currency, "recipientId", payment.recipientId())
+        Map.of("currency", currency, "recipientId", data.recipientId())
       );
       return;
     }
-    var amount = payment.amount().getMajor();
+    var amount = addition.getMajor();
     var endDate = data.endDate();
     var change = rate.multiply(BigDecimal.valueOf(amount)).longValue();
     var newEndDate = endDate.plusSeconds(change);
@@ -62,7 +63,7 @@ public class Donaton {
       new DonatonLink(
         Generators.timeBasedEpochGenerator().generate().toString(),
         data.id(),
-        payment.id(),
+        originId,
         "payment",
         endDate,
         newEndDate
@@ -77,6 +78,10 @@ public class Donaton {
     var patch = new WidgetConfig(List.of(timerEnd));
     WidgetUpdateCommand command = new WidgetUpdateCommand(data.id(), patch);
     commandSender.send(command);
+  }
+
+  public void handlePayment(PaymentEvent payment) {
+    handleChange(payment.amount(), payment.id());
   }
 
   public void update(WidgetConfig config) {
