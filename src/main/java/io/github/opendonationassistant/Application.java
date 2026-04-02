@@ -7,6 +7,7 @@ import io.github.opendonationassistant.rabbit.RabbitExceptionHandler;
 import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.ApplicationContextConfigurer;
 import io.micronaut.context.annotation.ContextConfigurer;
+import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.rabbitmq.connect.ChannelInitializer;
 import io.micronaut.rabbitmq.exception.DefaultRabbitListenerExceptionHandler;
@@ -15,6 +16,7 @@ import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 
+@Factory
 public class Application {
 
   @ContextConfigurer
