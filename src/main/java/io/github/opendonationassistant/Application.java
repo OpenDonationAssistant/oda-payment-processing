@@ -46,7 +46,12 @@ public class Application {
           "history",
           Map.of("event.HistoryItemEvent", reelEvents)
         ),
+        Exchange.Exchange(
+          "history",
+          Map.of("event.LinkReelCommand", reelEvents)
+        ),
         Exchange.Exchange("payments", Map.of("event.PaymentEvent", reelEvents)),
+
         Exchange.Exchange(
           "changes.widgets",
           Map.of("donaton", new Queue("config.donaton"))
@@ -54,6 +59,10 @@ public class Application {
         Exchange.Exchange(
           "history",
           Map.of("event.HistoryItemEvent", donatonEvents)
+        ),
+        Exchange.Exchange(
+          "history",
+          Map.of("event.ChangeDonatonCommand", donatonEvents)
         ),
         Exchange.Exchange(
           "payments",

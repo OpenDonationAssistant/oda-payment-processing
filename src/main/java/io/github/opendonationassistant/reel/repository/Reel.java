@@ -3,9 +3,9 @@ package io.github.opendonationassistant.reel.repository;
 import com.fasterxml.uuid.Generators;
 import io.github.opendonationassistant.commons.Amount;
 import io.github.opendonationassistant.commons.logging.ODALogger;
+import io.github.opendonationassistant.events.history.HistoryFacade;
 import io.github.opendonationassistant.events.history.event.ReelResultHistoryEvent;
 import io.github.opendonationassistant.events.payments.PaymentEvent;
-import io.github.opendonationassistant.events.history.HistoryFacade;
 import io.github.opendonationassistant.events.widget.Widget;
 import java.security.SecureRandom;
 import java.util.List;
@@ -58,6 +58,19 @@ public class Reel {
     );
   }
 
+  public void handleTrigger(Amount trigger, String paymentId) {
+    if (trigger.getMajor() >= data.requiredAmount().getMajor()) {
+      linkRepository.save(
+        new ReelLink(
+          Generators.timeBasedEpochGenerator().generate().toString(),
+          data.id(),
+          paymentId,
+          "payment"
+        )
+      );
+    }
+  }
+
   public void handlePayment(PaymentEvent payment) {
     if (payment == null) {
       return;
@@ -72,16 +85,7 @@ public class Reel {
       "Handling payment for reel",
       Map.of("payment", payment, "reel", this)
     );
-    if (payment.amount().getMajor() >= data.requiredAmount().getMajor()) {
-      linkRepository.save(
-        new ReelLink(
-          Generators.timeBasedEpochGenerator().generate().toString(),
-          data.id(),
-          payment.id(),
-          "payment"
-        )
-      );
-    }
+    handleTrigger(payment.amount(), payment.id());
   }
 
   public Reel update(Widget widget) {

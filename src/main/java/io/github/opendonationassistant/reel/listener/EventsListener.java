@@ -2,6 +2,7 @@ package io.github.opendonationassistant.reel.listener;
 
 import io.github.opendonationassistant.events.MessageProcessor;
 import io.github.opendonationassistant.reel.listener.handler.HistoryEventHandler;
+import io.github.opendonationassistant.reel.listener.handler.LinkReelCommandHandler;
 import io.github.opendonationassistant.reel.listener.handler.PaymentEventHandler;
 import io.github.opendonationassistant.reel.listener.handler.TriggerReelHandler;
 import io.micronaut.messaging.annotation.MessageHeader;
@@ -20,10 +21,16 @@ public class EventsListener {
   public EventsListener(
     HistoryEventHandler historyHandler,
     PaymentEventHandler paymentHandler,
-    TriggerReelHandler triggerHandler
+    TriggerReelHandler triggerHandler,
+    LinkReelCommandHandler linkReelCommandHandler
   ) {
     this.processor = new MessageProcessor(
-      List.of(historyHandler, paymentHandler, triggerHandler)
+      List.of(
+        historyHandler,
+        paymentHandler,
+        triggerHandler,
+        linkReelCommandHandler
+      )
     );
   }
 
