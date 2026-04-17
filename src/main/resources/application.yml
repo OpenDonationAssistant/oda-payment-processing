@@ -24,6 +24,8 @@ flyway:
     default:
       enabled: true
       baseline-on-migrate: true
+      schemas: 'processing'
+      default-schema: 'processing'
 jpa:
   default:
     entity-scan:
